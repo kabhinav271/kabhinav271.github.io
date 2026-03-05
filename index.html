@@ -1,842 +1,417 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Iran and Israel: Two Years of Open War — Reuters Graphics Style</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Frank+Ruhl+Libre:wght@400;700;900&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ground Shift: Interactive Story</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,700&display=swap');
+    :root {
+      --bg: #12110e;
+      --paper: #1a1915;
+      --ink: #f1ecdf;
+      --muted: #b4ab96;
+      --line: #353126;
+      --accent: #d6723a;
+      --accent-soft: #7d4f34;
+      --danger: #d2452f;
+      --ok: #5a9e64;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: radial-gradient(1200px 800px at 20% -20%, #2a2419 0%, var(--bg) 50%); color: var(--ink); }
+    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; line-height: 1.5; }
+    .progress {
+      position: fixed; top: 0; left: 0; height: 4px; width: 0;
+      background: linear-gradient(90deg, #c85e28, #ef9b52);
+      z-index: 999;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 90;
+      backdrop-filter: blur(8px);
+      background: rgba(18, 17, 14, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 12px 22px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-weight: 700; letter-spacing: .06em; font-size: 12px; text-transform: uppercase; color: #dbc7a8; }
+    .kicker { color: #c8b896; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
 
-<style>
-/* ─── RESET & BASE ─────────────────────────────────────────── */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --ink:       #1c1917;
-  --paper:     #fafaf8;
-  --mid:       #f0ede8;
-  --rule:      #d6d0c8;
-  --muted:     #78716c;
-  --red:       #b91c1c;
-  --red-light: #fef2f2;
-  --blue:      #1e40af;
-  --blue-light:#eff6ff;
-  --orange:    #c2410c;
-  --serif:     'Frank Ruhl Libre', 'Libre Baskerville', Georgia, serif;
-  --sans:      'IBM Plex Sans', system-ui, sans-serif;
-  --mono:      'IBM Plex Mono', monospace;
-}
-html { scroll-behavior:smooth; }
-body { background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; }
+    .hero {
+      min-height: 68vh;
+      display: grid;
+      place-items: end center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)),
+        radial-gradient(800px 380px at 66% 25%, rgba(214,114,58,.35), transparent 60%),
+        repeating-linear-gradient(115deg, #201d16 0 7px, #171510 7px 14px);
+      transform: scale(1.06);
+    }
+    .hero-inner {
+      max-width: 1180px;
+      width: 100%;
+      padding: 72px 22px 52px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 4.2rem);
+      line-height: .97;
+      letter-spacing: -.01em;
+      margin: 0;
+      max-width: 900px;
+      text-wrap: balance;
+    }
+    .dek {
+      color: var(--muted);
+      max-width: 760px;
+      margin-top: 18px;
+      font-size: clamp(1rem, 2vw, 1.24rem);
+    }
+    .byline {
+      margin-top: 22px;
+      color: #d7c8a9;
+      font-size: 13px;
+      letter-spacing: .02em;
+    }
 
-/* ─── TOP NAV ──────────────────────────────────────────────── */
-.nav {
-  position: fixed; top:0; left:0; right:0; z-index:200;
-  background: #fff;
-  border-bottom: 1px solid var(--rule);
-  display: flex; align-items:center; justify-content:space-between;
-  padding: 0 24px; height: 48px;
-}
-.nav-brand { font-family:var(--mono); font-size:13px; font-weight:500; letter-spacing:.06em; color:var(--ink); }
-.nav-brand span { color:var(--red); }
-.nav-meta { font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.04em; }
-.nav-tag {
-  background:var(--red); color:#fff;
-  font-family:var(--mono); font-size:10px; font-weight:500;
-  letter-spacing:.1em; padding:3px 8px; text-transform:uppercase;
-}
+    .container { max-width: 1180px; margin: 0 auto; padding: 34px 22px; }
 
-/* ─── HERO ─────────────────────────────────────────────────── */
-.hero {
-  padding: 96px 0 64px;
-  max-width: 780px; margin: 0 auto; padding-left:24px; padding-right:24px;
-  padding-top: 96px;
-}
-.hero-label {
-  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--red);
-  display:flex; align-items:center; gap:10px; margin-bottom:20px;
-}
-.hero-label::after { content:''; flex:1; height:1px; background:var(--red); opacity:.3; }
-.hero h1 {
-  font-family:var(--serif); font-size: clamp(32px,5.5vw,62px);
-  font-weight:900; line-height:1.08; letter-spacing:-.02em;
-  color:var(--ink); margin-bottom:22px;
-}
-.hero-deck {
-  font-family:var(--sans); font-size:19px; font-weight:300;
-  color:#44403c; line-height:1.65; margin-bottom:28px;
-  border-left:3px solid var(--red); padding-left:16px;
-}
-.hero-meta {
-  display:flex; gap:20px; align-items:center; flex-wrap:wrap;
-  padding:12px 0; border-top:1px solid var(--rule);
-  font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.04em;
-}
-.hero-meta b { color:var(--ink); }
+    .lead-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .metric {
+      background: linear-gradient(160deg, #201d16, #17150f);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .metric .num { font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 700; color: #f6d3a4; }
+    .metric .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
 
-/* ─── INTRO PARAGRAPH ──────────────────────────────────────── */
-.intro {
-  max-width:680px; margin:0 auto 0; padding: 0 24px 0;
-}
-.intro p {
-  font-family:'Libre Baskerville',serif; font-size:18px;
-  line-height:1.85; color:#292524; margin-bottom:22px;
-}
-.intro p.lead { font-size:20px; font-weight:400; }
+    .story-shell {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(320px, 520px);
+      gap: 26px;
+      align-items: start;
+      margin-top: 36px;
+    }
+    .sticky-panel {
+      position: sticky;
+      top: 74px;
+      min-height: 74vh;
+      background: linear-gradient(180deg, #181610, #14130f);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      overflow: hidden;
+    }
+    .mapbox {
+      height: 62vh;
+      background: radial-gradient(440px 260px at 50% 20%, rgba(214,114,58,.18), transparent 70%), #191710;
+      border-radius: 10px;
+      border: 1px solid #2d291f;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-caption { margin-top: 10px; color: var(--muted); font-size: 13px; }
+    .district { fill: #3f3727; stroke: #8e7b56; stroke-width: 1.2; transition: all .25s ease; }
+    .district.active { fill: #d6723a; stroke: #ffd7b1; filter: drop-shadow(0 0 12px rgba(214,114,58,.5)); }
 
-/* ─── FULL-BLEED STAT BAR ──────────────────────────────────── */
-.stat-bar {
-  background: var(--ink); color:#fff;
-  padding:36px 24px; margin:52px 0 0;
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:0; border-top:4px solid var(--red);
-}
-@media(max-width:700px){ .stat-bar{grid-template-columns:repeat(2,1fr);} }
-.stat-cell {
-  padding:0 28px; border-right:1px solid rgba(255,255,255,.12);
-  text-align:center;
-}
-.stat-cell:last-child { border:none; }
-.stat-cell .num {
-  font-family:var(--serif); font-size:44px; font-weight:900;
-  line-height:1; display:block; margin-bottom:6px;
-}
-.stat-cell .lbl {
-  font-family:var(--mono); font-size:10px; letter-spacing:.12em;
-  text-transform:uppercase; color:rgba(255,255,255,.5); line-height:1.4;
-}
+    .steps { display: grid; gap: 20px; }
+    .step {
+      min-height: 72vh;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, #1f1c15, #17150f);
+      opacity: .45;
+      transform: translateY(8px);
+      transition: opacity .25s ease, transform .25s ease, border-color .25s ease;
+    }
+    .step.active { opacity: 1; transform: translateY(0); border-color: #6a5736; }
+    .step h2 {
+      margin: 0 0 8px;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      line-height: 1.1;
+    }
+    .step p { color: #d2c7b0; margin: 0 0 16px; }
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #6a5736;
+      background: rgba(214,114,58,.1);
+      color: #f0c99e;
+      font-size: 12px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
 
-/* ─── SCROLLY CONTAINER ─────────────────────────────────────── */
-.scrolly-section {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  margin-top: 0;
-}
+    .timeline {
+      margin-top: 34px;
+      border: 1px solid var(--line);
+      background: linear-gradient(170deg, #1d1b14, #14120d);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .timeline h3 { margin: 0 0 8px; font-size: 1.1rem; font-family: 'Newsreader', Georgia, serif; }
+    .timeline p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .range { width: 100%; accent-color: var(--accent); }
+    .bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 14px; align-items: end; height: 140px; }
+    .bar { background: linear-gradient(180deg, #efb37b, #b66132); border-radius: 6px 6px 3px 3px; min-height: 8px; transition: height .35s ease; }
+    .monthline { display: flex; justify-content: space-between; color: var(--muted); margin-top: 8px; font-size: 12px; }
 
-/* Left: text steps */
-.steps-col {
-  width: 42%;
-  padding: 80px 48px 80px 24px;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
-@media(max-width:800px){ .steps-col{ width:100%; padding:24px; } }
+    .compare {
+      margin-top: 34px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: linear-gradient(170deg, #201d16, #15130e);
+    }
+    .compare h3 { margin: 0 0 12px; font-family: 'Newsreader', Georgia, serif; }
+    .slider-wrap {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #3a3224;
+      height: min(46vw, 320px);
+      background: #0f0f0d;
+    }
+    .scene-before,
+    .scene-after {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .scene-before {
+      background-image: repeating-linear-gradient(130deg, #3f3a2e 0 12px, #2a271f 12px 24px);
+    }
+    .scene-after {
+      background-image: repeating-linear-gradient(130deg, #4f2a20 0 12px, #321a15 12px 24px);
+      width: 50%;
+      overflow: hidden;
+      border-right: 2px solid #ffd1ad;
+      box-shadow: 0 0 20px rgba(255,184,135,.35);
+    }
+    .compare input { width: 100%; margin-top: 12px; accent-color: #f39556; }
+    .labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
 
-.step {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px 0;
-  opacity: .3;
-  transition: opacity .4s ease;
-}
-.step.is-active { opacity: 1; }
-.step-label {
-  font-family:var(--mono); font-size:10px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--muted); margin-bottom:10px;
-  display:flex; align-items:center; gap:8px;
-}
-.step-label .dot {
-  width:8px; height:8px; border-radius:50%; flex-shrink:0;
-}
-.step h2 {
-  font-family:var(--serif); font-size:clamp(22px,3vw,32px);
-  font-weight:700; line-height:1.2; margin-bottom:14px; color:var(--ink);
-}
-.step p {
-  font-family:'Libre Baskerville',serif; font-size:16px;
-  line-height:1.8; color:#44403c; margin-bottom:12px;
-}
-.step .callout {
-  background:var(--mid); border-left:3px solid var(--rule);
-  padding:12px 16px; margin-top:8px;
-  font-family:var(--mono); font-size:12px; color:var(--muted);
-  line-height:1.6;
-}
-.step .callout b { color:var(--ink); }
-.step .callout.red-call { background:var(--red-light); border-color:var(--red); }
-.step .callout.blue-call { background:var(--blue-light); border-color:var(--blue); }
+    .footer { margin-top: 36px; color: #a89b83; font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
 
-/* Right: sticky graphic */
-.graphic-col {
-  width: 58%;
-  flex-shrink: 0;
-  position: sticky;
-  top: 48px;
-  height: calc(100vh - 48px);
-  overflow: hidden;
-}
-@media(max-width:800px){
-  .graphic-col{ display:none; }
-}
-#mainCanvas {
-  width:100%; height:100%;
-  display:block;
-  background:#0e1723;
-}
-
-/* ─── PROGRESS BAR ─────────────────────────────────────────── */
-.progress-rail {
-  position:fixed; left:0; top:48px; width:3px;
-  height: calc(100vh - 48px);
-  background:rgba(0,0,0,.08); z-index:300;
-}
-.progress-fill {
-  width:100%; background:var(--red);
-  transition: height .15s linear;
-  height:0%;
-}
-
-/* ─── CHAPTER DIVIDERS ─────────────────────────────────────── */
-.chapter-intro {
-  max-width:680px; margin:0 auto; padding:72px 24px 0;
-}
-.chapter-intro .ch-num {
-  font-family:var(--mono); font-size:10px; letter-spacing:.2em;
-  text-transform:uppercase; color:var(--red); margin-bottom:6px;
-}
-.chapter-intro h2 {
-  font-family:var(--serif); font-size:clamp(26px,4vw,40px);
-  font-weight:900; line-height:1.12; margin-bottom:14px; color:var(--ink);
-}
-.chapter-intro p {
-  font-family:'Libre Baskerville',serif; font-size:17px;
-  line-height:1.85; color:#44403c;
-}
-.chapter-rule { max-width:680px; margin:0 auto; padding:0 24px; }
-.chapter-rule hr { border:none; border-top:2px solid var(--ink); margin:20px 0 0; }
-
-/* ─── PULL QUOTE ───────────────────────────────────────────── */
-.pull-quote {
-  max-width:680px; margin:0 auto; padding:48px 24px;
-}
-.pull-quote blockquote {
-  font-family:var(--serif); font-size:clamp(20px,3vw,28px);
-  font-style:italic; font-weight:400; line-height:1.45;
-  color:var(--ink); border-top:3px solid var(--ink);
-  border-bottom:3px solid var(--ink);
-  padding:22px 0;
-}
-.pull-quote cite {
-  display:block; margin-top:12px;
-  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
-  color:var(--muted); font-style:normal;
-}
-
-/* ─── INLINE DATA TABLE ────────────────────────────────────── */
-.data-table-wrap {
-  max-width:780px; margin:0 auto; padding:48px 24px;
-}
-.data-table-wrap .tbl-title {
-  font-family:var(--mono); font-size:11px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--muted); margin-bottom:4px;
-}
-.data-table-wrap .tbl-headline {
-  font-family:var(--serif); font-size:22px; font-weight:700;
-  margin-bottom:18px; line-height:1.25;
-}
-table.dt { width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; }
-table.dt thead tr { border-bottom:2px solid var(--ink); }
-table.dt th { padding:8px 12px; font-family:var(--mono); font-size:10px;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
-  text-align:left; font-weight:500; }
-table.dt td { padding:11px 12px; border-bottom:1px solid var(--rule);
-  vertical-align:top; line-height:1.5; }
-table.dt tr:last-child td { border:none; }
-table.dt .red { color:var(--red); font-weight:600; }
-table.dt .blue { color:var(--blue); font-weight:600; }
-table.dt .orn { color:var(--orange); font-weight:600; }
-
-/* ─── BAR CHART ────────────────────────────────────────────── */
-.bar-chart { padding:8px 0 4px; }
-.bc-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-.bc-lbl { font-family:var(--mono); font-size:11px; color:var(--muted); width:130px; flex-shrink:0; line-height:1.3; }
-.bc-track { flex:1; background:var(--mid); height:22px; position:relative; overflow:hidden; }
-.bc-fill { height:100%; display:flex; align-items:center; padding-left:8px;
-  font-family:var(--mono); font-size:10px; font-weight:500; color:#fff;
-  transition:width 1.2s cubic-bezier(.4,0,.2,1); }
-.bc-val { font-family:var(--mono); font-size:11px; color:var(--ink);
-  font-weight:600; width:52px; text-align:right; flex-shrink:0; }
-
-/* ─── OUTRO ────────────────────────────────────────────────── */
-.outro {
-  max-width:680px; margin:0 auto; padding:72px 24px 100px;
-}
-.outro p {
-  font-family:'Libre Baskerville',serif; font-size:18px;
-  line-height:1.85; color:#292524; margin-bottom:22px;
-}
-.source-note {
-  background:var(--mid); padding:20px 24px; margin-top:48px;
-  border-top:2px solid var(--rule);
-  font-family:var(--mono); font-size:11px; color:var(--muted); line-height:1.8;
-}
-
-/* ─── FOOTER ───────────────────────────────────────────────── */
-footer {
-  background:var(--ink); color:rgba(255,255,255,.45);
-  text-align:center; padding:28px 24px;
-  font-family:var(--mono); font-size:11px; letter-spacing:.06em; line-height:2;
-}
-footer b { color:rgba(255,255,255,.8); }
-
-/* ─── FADE-IN REVEAL ───────────────────────────────────────── */
-.reveal { opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
-.reveal.in { opacity:1; transform:none; }
-</style>
+    @media (max-width: 920px) {
+      .lead-grid { grid-template-columns: 1fr; }
+      .story-shell { grid-template-columns: 1fr; }
+      .sticky-panel { position: relative; top: 0; min-height: auto; }
+      .mapbox { height: 340px; }
+      .step { min-height: 58vh; }
+      .topbar-inner { padding: 10px 14px; }
+      .container, .hero-inner { padding-left: 14px; padding-right: 14px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-brand">STRIKE<span>WATCH</span> · Graphics</div>
-  <span class="nav-tag">Special Report</span>
-  <div class="nav-meta">Updated March 5, 2026</div>
-</nav>
-
-<!-- PROGRESS -->
-<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
-
-<!-- ═══════════ HERO ═══════════ -->
-<header class="hero">
-  <div class="hero-label">Two years of direct confrontation</div>
-  <h1>Iran and Israel<br>went to war.<br>Here is what happened.</h1>
-  <p class="hero-deck">Since April 2024, Iran has fired more than 870 ballistic missiles and 1,170 drones directly at Israel — the first time in history it has done so. Israel struck back across 24 of 31 Iranian provinces. Then the United States joined in.</p>
-  <div class="hero-meta">
-    <span>By <b>StrikeWatch Data Desk</b></span>
-    <span>March 5, 2026</span>
-    <span>Sources: IDF · IRGC · Al Jazeera · Reuters · Wikipedia · FDD</span>
-  </div>
-</header>
-
-<!-- ═══════════ INTRO ═══════════ -->
-<div class="intro">
-  <p class="lead">It began with a consulate. On April 1, 2024, Israeli aircraft struck the Iranian embassy annex in Damascus, killing two IRGC generals and five officers. Iran had long maintained that attacking its diplomatic soil meant attacking Iran itself.</p>
-  <p>Thirteen days later, more than 300 projectiles crossed Iranian airspace toward Israel. What had for decades been a "shadow war" — fought through proxies, assassinations, and cyberattacks — had become something new: direct, open, nation-state warfare.</p>
-  <p>This is the story of how it escalated, weapon by weapon, strike by strike, over the two years that followed.</p>
-</div>
-
-<!-- ═══════════ STAT BAR ═══════════ -->
-<div class="stat-bar reveal">
-  <div class="stat-cell"><span class="num" style="color:#f87171">870+</span><span class="lbl">Iranian ballistic<br>missiles fired</span></div>
-  <div class="stat-cell"><span class="num" style="color:#93c5fd">1,000+</span><span class="lbl">Israeli air force<br>sorties into Iran</span></div>
-  <div class="stat-cell"><span class="num" style="color:#fbbf24">~90%</span><span class="lbl">Iranian missiles<br>intercepted</span></div>
-  <div class="stat-cell"><span class="num" style="color:#f87171">1,190+</span><span class="lbl">Killed in Iran<br>from Israeli strikes</span></div>
-</div>
-
-<!-- ═══════════ SCROLLY ═══════════ -->
-<section class="scrolly-section" id="scrolly">
-
-  <!-- LEFT: text steps -->
-  <div class="steps-col" id="stepsCol">
-
-    <!-- STEP 0 -->
-    <div class="step is-active" data-step="0">
-      <div class="step-label"><span class="dot" style="background:#78716c"></span>The Region · Before</div>
-      <h2>A conflict fought in the shadows — until it wasn't</h2>
-      <p>For decades, Iran and Israel waged a covert war. Israel killed Iranian nuclear scientists. Iran armed Hezbollah and Hamas. Both sides struck each other's ships, pipelines, and computer networks. Neither ever fired directly at the other's soil.</p>
-      <p>The map shows the two countries separated by roughly 1,700 km — and by Iraq, Syria, and Jordan in between.</p>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Interactive Desk</div>
+      <div class="kicker">Ground Change Tracker</div>
     </div>
-
-    <!-- STEP 1 -->
-    <div class="step" data-step="1">
-      <div class="step-label"><span class="dot" style="background:#b91c1c"></span>April 13–14, 2024</div>
-      <h2>Operation True Promise I: The largest drone strike in history</h2>
-      <p>Just after midnight, Iran launched <b>170 Shahed drones</b>, <b>30 cruise missiles</b>, and <b>120 ballistic missiles</b> at Israel — roughly 60 tonnes of explosive material in a single salvo. It was the first direct Iranian attack on Israeli soil in history.</p>
-      <p>A coalition of US, British, French, and Jordanian forces helped Israel's Arrow-3 and Iron Dome systems. By dawn, the IDF announced it had intercepted <b>99%</b> of all incoming weapons. A seven-year-old Bedouin girl was struck by falling debris and critically injured.</p>
-      <div class="callout red-call"><b>Cost asymmetry:</b> Iran spent ~$80–100M on the attack. Defending it cost the coalition roughly <b>$1 billion</b> — a 10:1 ratio in Iran's favour, exposing a long-term flaw in missile defence economics.</div>
-    </div>
-
-    <!-- STEP 2 -->
-    <div class="step" data-step="2">
-      <div class="step-label"><span class="dot" style="background:#1e40af"></span>April 18, 2024</div>
-      <h2>Israel replies — with surgical restraint</h2>
-      <p>Israel's response was a single, deliberate strike. An explosion near <b>Isfahan</b> destroyed an air-defence radar specifically protecting the <b>Natanz nuclear facility</b>. No mass retaliation, no attempt to escalate.</p>
-      <p>The message was unmistakable: <em>We can reach your nuclear sites whenever we choose.</em></p>
-    </div>
-
-    <!-- STEP 3 -->
-    <div class="step" data-step="3">
-      <div class="step-label"><span class="dot" style="background:#b91c1c"></span>October 1, 2024</div>
-      <h2>True Promise II: Hypersonic. Faster. Harder to stop.</h2>
-      <p>Iran had learned from April. It discarded the slow drones and cruise missiles and fired approximately <b>200 ballistic missiles</b> — including the hypersonic <b>Fattah-1</b> and <b>Kheibar Shekan</b> — in multiple waves toward Israeli airbases.</p>
-      <p>The triggers: Haniyeh assassinated in Tehran in July; Nasrallah killed in Beirut in September; IRGC commander Abbas Nilforoushan killed alongside him. Iran named the operation a response to all three.</p>
-      <div class="callout"><b>Interception rate fell to ~90%.</b> Twenty to thirty-two missiles struck the Nevatim Airbase — real visible damage on Israeli soil. Several more hit Tel Nof Airbase and a school in Gedera.</div>
-    </div>
-
-    <!-- STEP 4 -->
-    <div class="step" data-step="4">
-      <div class="step-label"><span class="dot" style="background:#1e40af"></span>October 26, 2024</div>
-      <h2>Israel destroys Iran's air defences</h2>
-      <p>Israel's counter-strike was not about retaliation — it was preparation. Israeli aircraft systematically destroyed nearly all of Iran's Russian-supplied <b>S-300 air-defence batteries</b>, the shields protecting its nuclear facilities.</p>
-      <p>Analysts called it a "key removal" operation: not a response, but the deliberate clearing of obstacles for what would come next.</p>
-      <div class="callout blue-call"><b>Strategic shift:</b> Iran had lost its main layer of protection. Every Iranian nuclear site was now exposed to direct Israeli air attack.</div>
-    </div>
-
-    <!-- STEP 5 -->
-    <div class="step" data-step="5">
-      <div class="step-label"><span class="dot" style="background:#1e40af"></span>June 13, 2025</div>
-      <h2>Operation Rising Lion: Israel strikes first — and hard</h2>
-      <p>In the early hours of June 13, with the IAEA warning that Iran held enough enriched uranium for <b>nine nuclear warheads</b>, Israel launched its most ambitious offensive in history. More than <b>1,000 air force sorties</b>, <b>600 refuelling operations</b>, strikes across <b>24 of 31 Iranian provinces</b>.</p>
-      <p>The <b>Natanz enrichment facility</b> was hit. Missile programme chief General Hajizadeh was killed in his command post. Targets included military infrastructure, air defences, drone factories, and IRGC headquarters.</p>
-    </div>
-
-    <!-- STEP 6 -->
-    <div class="step" data-step="6">
-      <div class="step-label"><span class="dot" style="background:#b91c1c"></span>June 13–24, 2025</div>
-      <h2>The Twelve-Day War: 1,550 projectiles in 12 days</h2>
-      <p>Iran's response was the most intense missile barrage of the entire conflict. Over twelve days, it fired approximately <b>550 ballistic missiles</b> and <b>1,000 drones</b>. The Haifa oil refinery was hit. A residential building in northern Israel collapsed. <b>28 Israelis</b> were killed.</p>
-      <p>A US-brokered ceasefire came into effect on June 24. Iran fired two final missiles with two hours remaining on the clock. Both were intercepted.</p>
-      <div class="callout red-call"><b>June 22:</b> US B-2 bombers from Diego Garcia struck three Iranian nuclear sites. Iran fired back at the US base in Qatar. Trump declared the Iranian nuclear programme "obliterated."</div>
-    </div>
-
-    <!-- STEP 7 -->
-    <div class="step" data-step="7">
-      <div class="step-label"><span class="dot" style="background:#c2410c"></span>February 28 – March 5, 2026</div>
-      <h2>"Accelerating, not decelerating": The US joins in</h2>
-      <p>On February 27, 2026, the IAEA revealed Iran had secretly stored highly enriched uranium in a hidden facility that survived the June strikes. The next day, the United States and Israel launched the largest combined military operation against Iran in history.</p>
-      <p>The Israeli army chief of staff, defence minister, and dozens of IRGC commanders were killed. On March 1, Supreme Leader Khamenei was killed. Iran fired back at <b>27 US military bases</b> across <b>9 countries</b>.</p>
-      <div class="callout"><b>Iran's missile rate fell 86% by Day 6</b> — launchers were being destroyed faster than they could be replaced, per US Joint Chiefs chairman General Dan Caine.</div>
-    </div>
-
-    <!-- STEP 8 -->
-    <div class="step" data-step="8">
-      <div class="step-label"><span class="dot" style="background:#78716c"></span>The Toll · March 5, 2026</div>
-      <h2>More than 1,200 dead. The war continues.</h2>
-      <p>At least <b>1,190 people have been killed in Iran</b> by Israeli and American strikes since April 2024. Twenty-eight Israelis died. Six American soldiers were killed in Iranian retaliatory strikes on regional bases.</p>
-      <p>Iran's economy has collapsed. The rial trades at 1.45 million per dollar. Protests have erupted in more than 100 cities — the largest unrest since 1979. The conflict is ongoing.</p>
-    </div>
-
-  </div><!-- /steps-col -->
-
-  <!-- RIGHT: sticky canvas -->
-  <div class="graphic-col">
-    <canvas id="mainCanvas"></canvas>
   </div>
 
-</section><!-- /scrolly -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Inside A Neighborhood’s Rapid Transformation</h1>
+      <p class="dek">A scroll-driven visual report showing how one dense urban corridor changed block by block over six months.</p>
+      <div class="byline">By Data Visual Team | March 5, 2026</div>
+    </div>
+  </section>
 
-<!-- ═══════════ DEEP DIVES ═══════════ -->
-<div class="chapter-intro reveal">
-  <div class="ch-num">Data · Strike by Strike</div>
-  <h2>How each wave of missiles compared</h2>
-  <p>Iran escalated dramatically between April 2024 and June 2025 — doubling, then quadrupling the number of ballistic missiles fired in a single operation.</p>
-</div>
-<div class="chapter-rule"><hr></div>
+  <main class="container">
+    <div class="lead-grid">
+      <article class="metric"><div class="num" data-count="412">0</div><div class="lbl">Structures Damaged</div></article>
+      <article class="metric"><div class="num" data-count="137">0</div><div class="lbl">Blocks Fully Cleared</div></article>
+      <article class="metric"><div class="num" data-count="6">0</div><div class="lbl">Months Tracked</div></article>
+    </div>
 
-<div class="data-table-wrap reveal">
-  <div class="tbl-title">Ballistic missile escalation</div>
-  <div class="tbl-headline">Iran fired 4.5× more ballistic missiles in June 2025 than in April 2024.</div>
-  <div class="bar-chart">
-    <div class="bc-row"><span class="bc-lbl">Apr 2024<br>True Promise I</span><div class="bc-track"><div class="bc-fill" style="width:22%;background:#b91c1c">120</div></div><span class="bc-val">120</span></div>
-    <div class="bc-row"><span class="bc-lbl">Oct 2024<br>True Promise II</span><div class="bc-track"><div class="bc-fill" style="width:36%;background:#991b1b">~200</div></div><span class="bc-val">~200</span></div>
-    <div class="bc-row"><span class="bc-lbl">Jun 2025<br>12-Day War</span><div class="bc-track"><div class="bc-fill" style="width:100%;background:#7f1d1d">~550</div></div><span class="bc-val">~550</span></div>
-    <div class="bc-row"><span class="bc-lbl">Mar 2026<br>Ongoing</span><div class="bc-track"><div class="bc-fill" style="width:58%;background:#450a0a">320+</div></div><span class="bc-val">320+</span></div>
-  </div>
-</div>
+    <section class="story-shell">
+      <aside class="sticky-panel">
+        <div class="mapbox">
+          <svg viewBox="0 0 500 350" width="100%" height="100%" aria-label="District map">
+            <rect id="d0" class="district" x="28" y="30" width="130" height="86" rx="8"></rect>
+            <rect id="d1" class="district" x="176" y="34" width="130" height="80" rx="8"></rect>
+            <rect id="d2" class="district" x="324" y="30" width="146" height="92" rx="8"></rect>
+            <rect id="d3" class="district" x="44" y="136" width="158" height="94" rx="8"></rect>
+            <rect id="d4" class="district" x="220" y="130" width="130" height="104" rx="8"></rect>
+            <rect id="d5" class="district" x="366" y="138" width="110" height="92" rx="8"></rect>
+            <rect id="d6" class="district" x="72" y="250" width="150" height="72" rx="8"></rect>
+            <rect id="d7" class="district" x="246" y="248" width="222" height="74" rx="8"></rect>
+          </svg>
+        </div>
+        <div class="map-caption" id="map-caption">Scroll to step through the timeline.</div>
+      </aside>
 
-<div class="pull-quote reveal">
-  <blockquote>"The coalition destroyed 99 percent of the incoming weapons. Most were eliminated before reaching Israeli airspace."</blockquote>
-  <cite>— IDF Spokesperson · April 14, 2024</cite>
-</div>
+      <div class="steps" id="steps">
+        <article class="step active" data-map="d2" data-caption="Phase 1: Damage concentrated in the northeast blocks.">
+          <span class="chip">Phase 1</span>
+          <h2>Initial Shock In The Northeast</h2>
+          <p>The first wave concentrated around high-density blocks near the corridor edge. Most nearby streets remained functional but heavily congested.</p>
+          <div class="mut">Key signal: sudden drop in service access within 48 hours.</div>
+        </article>
 
-<div class="data-table-wrap reveal">
-  <div class="tbl-title">Regional impact · Feb–Mar 2026</div>
-  <div class="tbl-headline">Iran struck US bases in nine countries across the Middle East.</div>
-  <table class="dt">
-    <thead><tr><th>Country</th><th>Target</th><th>Outcome</th></tr></thead>
-    <tbody>
-      <tr><td>🇧🇭 Bahrain</td><td>US 5th Fleet HQ · International Airport</td><td class="red">Struck repeatedly; 1 killed</td></tr>
-      <tr><td>🇮🇶 Iraq</td><td>Jurf al-Sakher base · Erbil airport</td><td class="orn">2 fighters killed</td></tr>
-      <tr><td>🇶🇦 Qatar</td><td>Al Udeid Air Base</td><td class="orn">Struck in retaliation for US nuclear strikes</td></tr>
-      <tr><td>🇯🇴 Jordan</td><td>Air corridor</td><td class="blue">49 missiles and drones intercepted</td></tr>
-      <tr><td>🇦🇪 UAE</td><td>Abu Dhabi · Dubai · Palm Jumeirah</td><td class="red">2 killed by debris</td></tr>
-      <tr><td>🇸🇦 Saudi Arabia</td><td>Capital · Eastern Region</td><td class="blue">Repelled by Saudi air defences</td></tr>
-      <tr><td>🇺🇸 US (regional)</td><td>27 bases across 9 countries</td><td class="red">6 US soldiers killed total</td></tr>
-    </tbody>
-  </table>
-</div>
+        <article class="step" data-map="d4" data-caption="Phase 2: Expansion toward central districts.">
+          <span class="chip">Phase 2</span>
+          <h2>Pressure Moves Inward</h2>
+          <p>By month two, the central district became the primary hotspot. Satellite traces show contiguous structural damage rather than isolated impact points.</p>
+          <div class="mut">Key signal: contiguous damage area more than doubled.</div>
+        </article>
 
-<!-- ═══════════ OUTRO ═══════════ -->
-<div class="outro reveal">
-  <p>As of March 5, 2026, the United States and Israel are still striking Iran. Iran is still firing back — at roughly 14% of its peak rate. The reason is mechanical: its launchers are being destroyed faster than they can be replaced.</p>
-  <p>Iran's air defences are gone. Its IRGC command structure has been decapitated. Its supreme leader is dead. Its nuclear programme may be set back by years. And yet the missiles keep coming.</p>
-  <p>A third of all oil exported by sea still passes through the Strait of Hormuz. Shipping lanes have shifted. Fuel prices have climbed. The cost of a war, as always, spreads far beyond the combatants.</p>
-  <p>Two countries that spent four decades fighting each other through proxies are now fighting each other directly — with weapons, in the open, over the same skies. The question the world is asking is no longer <em>whether</em> this will end. It is what will be left when it does.</p>
+        <article class="step" data-map="d5" data-caption="Phase 3: East-side blocks show repeated clearing cycles.">
+          <span class="chip">Phase 3</span>
+          <h2>Repeated Clearing Cycles</h2>
+          <p>Built-up zones in the east underwent repeated clearance. Residents reported multiple return-attempts followed by renewed displacement.</p>
+          <div class="mut">Key signal: repeated movement in and out of the same 2 km zone.</div>
+        </article>
 
-  <div class="source-note">
-    <b>Sources and methodology:</b> Strike counts drawn from IDF press releases, IRGC official statements, Al Jazeera conflict live tracker (Mar 2026), Wikipedia open-source conflict tracking, FDD's Long War Journal, Reuters reporting, the House of Commons Library, and CFR's Global Conflict Tracker. Casualty figures are estimates that vary across sources; we use the most conservative verified counts. This is a data journalism project for educational and informational purposes.
-  </div>
-</div>
+        <article class="step" data-map="d7" data-caption="Phase 4: Consolidated transformation in the southern belt.">
+          <span class="chip">Phase 4</span>
+          <h2>Southern Belt Consolidates</h2>
+          <p>In the final period, the southern belt shifted fastest. What had been mixed-use streets now appears as wide cleared strips intersecting residential pockets.</p>
+          <div class="mut">Key signal: block-level continuity in cleared pathways.</div>
+        </article>
+      </div>
+    </section>
 
-<footer>
-  <b>STRIKEWATCH</b> · Data Graphics · March 5, 2026<br>
-  Iran–Israel Conflict Tracker · All data sourced from public reporting
-</footer>
+    <section class="timeline">
+      <h3>Timeline Scrubber</h3>
+      <p>Drag to inspect monthly intensity estimates and footprint change.</p>
+      <div class="row" style="justify-content:space-between; color: #e6d5b6;">
+        <strong id="monthLabel">Month 1</strong>
+        <span id="intensity">Intensity: 18%</span>
+      </div>
+      <input class="range" id="timelineRange" type="range" min="0" max="5" value="0" />
+      <div class="bars" id="bars"></div>
+      <div class="monthline"><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span></div>
+    </section>
 
-<!-- ═══════════════════════════════════════════════════════════
-     CANVAS MAP ENGINE
-═══════════════════════════════════════════════════════════ -->
-<script>
-const canvas = document.getElementById('mainCanvas');
-const ctx    = canvas.getContext('2d');
+    <section class="compare">
+      <h3>Before / After Swipe</h3>
+      <div class="slider-wrap">
+        <div class="scene-before"></div>
+        <div class="scene-after" id="afterLayer"></div>
+      </div>
+      <input id="compareRange" type="range" min="0" max="100" value="50" />
+      <div class="labels"><span>Before</span><span>After</span></div>
+    </section>
 
-// ─── GEO PROJECTION ────────────────────────────────────────
-const BOUNDS = { minLat:21, maxLat:43, minLng:27, maxLng:64 };
-function geo(lat, lng) {
-  const x = (lng - BOUNDS.minLng) / (BOUNDS.maxLng - BOUNDS.minLng) * canvas.width;
-  const y = (1 - (lat - BOUNDS.minLat) / (BOUNDS.maxLat - BOUNDS.minLat)) * canvas.height;
-  return { x, y };
-}
+    <div class="footer">
+      Method note: Demo dataset for interactive design prototype. Replace with verified reporting data, sourcing, and annotations for publication.
+    </div>
+  </main>
 
-// ─── STATIC GEOGRAPHY ──────────────────────────────────────
-const LAND = [
-  { id:'iran',   fill:'#162b1e', stroke:'#1f4031', pts:[[38.5,44],[37,48],[35.5,51],[34.5,56],[33,58],[29,61],[27,58],[25,57],[26.5,54],[28,51],[30,48.5],[31,48],[33.5,46],[35,44],[37,44]] },
-  { id:'israel', fill:'#0e1c33', stroke:'#1a3a70', pts:[[33.3,35.9],[32,34.8],[31.2,34.5],[29.5,34.9],[29.5,35.1],[31,35.2],[32.7,35.6],[33.3,36]] },
-  { id:'iraq',   fill:'#121b14', stroke:'#1a2e1c', pts:[[37.4,42],[38.5,43.5],[33.6,46],[30,47.5],[29.5,47.5],[30,44],[32,42],[33.5,41],[37,41.5]] },
-  { id:'syria',  fill:'#121b14', stroke:'#1a2e1c', pts:[[37.3,36.5],[37.4,42],[33.5,41],[33,40],[32.5,36.5],[33.5,36],[35.7,36.5]] },
-  { id:'jordan', fill:'#121814', stroke:'#1a2418', pts:[[33.3,35.9],[33.3,38.5],[32,39.5],[29.5,38],[29.5,35.1],[31,35.2],[32.7,35.6]] },
-  { id:'saudi',  fill:'#161208', stroke:'#251c0a', pts:[[29.5,34.9],[29.5,38.5],[26,39],[22,37],[22,50],[26,55],[27,53],[28,51],[30,49],[31,48],[29.5,47.5],[30,44],[30,35]] },
-  { id:'turkey', fill:'#121a18', stroke:'#1a2826', pts:[[42,27],[42,44],[38.5,43.5],[37.4,42],[37.3,36.5],[37,36.5],[37,35.5],[38,35],[40,32.5],[42,28.5]] },
-  { id:'lebanon',fill:'#121b14', stroke:'#1a2e1c', pts:[[34.5,35.5],[33.9,35.5],[33.3,36],[33.3,35.9],[33.5,36],[35.7,36.5],[35.9,36.2]] },
-  { id:'qatar',  fill:'#121814', stroke:'#1a2418', pts:[[26.2,50.5],[25,50.5],[24.5,51.5],[26.2,51.5]] },
-  { id:'uae',    fill:'#121814', stroke:'#1a2418', pts:[[26,51],[23.5,51],[23,55.5],[24.5,56.5],[26,56]] },
-  { id:'bahrain',fill:'#121814', stroke:'#1a2418', pts:[[26.3,50.3],[25.8,50.3],[25.8,50.7],[26.3,50.7]] },
-  { id:'egypt',  fill:'#121814', stroke:'#1a2418', pts:[[31.5,25],[22,25],[22,37],[30,37],[31.5,34.5]] },
-  { id:'oman',   fill:'#121814', stroke:'#1a2418', pts:[[24.5,56.5],[23,55.5],[22,55],[22,60],[21,59],[22,60],[24,58.5],[24.5,56.5]] },
-];
+  <script>
+    const progress = document.getElementById('progress');
+    const steps = [...document.querySelectorAll('.step')];
+    const caption = document.getElementById('map-caption');
+    const districts = [...document.querySelectorAll('.district')];
+    const counters = [...document.querySelectorAll('[data-count]')];
+    const range = document.getElementById('timelineRange');
+    const monthLabel = document.getElementById('monthLabel');
+    const intensity = document.getElementById('intensity');
+    const barsWrap = document.getElementById('bars');
+    const compare = document.getElementById('compareRange');
+    const afterLayer = document.getElementById('afterLayer');
 
-const WATER = [
-  { pts:[[30,27],[37,27],[37,37],[30,37]] },           // Med
-  { pts:[[30,48],[29,49],[24,50.5],[22,55],[24,57],[26,56],[28,55],[30,52],[32,50]] }, // Persian Gulf
-  { pts:[[22,32],[22,43],[12,43],[12,32]] },            // Red Sea
-];
-
-const CITIES = [
-  { name:'Tehran',    lat:35.7, lng:51.4, side:'iran',    big:true },
-  { name:'Tel Aviv',  lat:32.1, lng:34.8, side:'israel',  big:true },
-  { name:'Natanz ☢',  lat:33.7, lng:51.9, side:'iran',    nuke:true },
-  { name:'Haifa',     lat:32.8, lng:35.0, side:'israel' },
-  { name:'Isfahan',   lat:32.6, lng:51.7, side:'iran' },
-  { name:'Tabriz',    lat:38.1, lng:46.3, side:'iran' },
-  { name:'Nevatim',   lat:31.2, lng:35.0, side:'israel' },
-  { name:'Doha',      lat:25.3, lng:51.5, side:'neutral' },
-  { name:'Bahrain',   lat:26.2, lng:50.6, side:'neutral' },
-  { name:'Dubai',     lat:25.2, lng:55.3, side:'neutral' },
-];
-
-// Each STATE drives what the map shows per scroll step
-const STATES = [
-  // 0: overview, just geography
-  { label:'overview', arcs:[], highlights:[], pulse:null },
-  // 1: Iranian attack Apr 2024 — drones + BMs from Iran to Israel
-  { label:'apr2024',  arcs:[
-      { from:[35.7,51.4], to:[32.1,34.8], color:'#ef4444', count:170, label:'170 drones' },
-      { from:[35.7,51.4], to:[32.1,34.8], color:'#dc2626', count:120, offset:-18, label:'120 ballistic missiles' },
-    ], highlights:['iran','israel'], pulse:'israel' },
-  // 2: Israeli reply to Isfahan
-  { label:'reply1',   arcs:[
-      { from:[32.1,34.8], to:[32.6,51.7], color:'#3b82f6', count:1, label:'Strike on Isfahan radar' },
-    ], highlights:['israel','iran'], pulse:'iran' },
-  // 3: Oct 2024 BMs
-  { label:'oct2024',  arcs:[
-      { from:[35.7,51.4], to:[32.1,34.8], color:'#ef4444', count:200, label:'~200 ballistic missiles' },
-    ], highlights:['iran','israel'], pulse:'israel' },
-  // 4: Israel destroys S-300
-  { label:'s300',     arcs:[
-      { from:[32.1,34.8], to:[35.7,51.4], color:'#3b82f6', count:1, label:'S-300 batteries destroyed' },
-    ], highlights:['israel','iran'], pulse:'iran' },
-  // 5: Rising Lion
-  { label:'risinglion', arcs:[
-      { from:[32.1,34.8], to:[35.7,51.4], color:'#2563eb', count:1000, label:'1,000+ sorties · 24 provinces hit' },
-      { from:[32.1,34.8], to:[33.7,51.9], color:'#60a5fa', count:1, offset:12, label:'Natanz hit' },
-    ], highlights:['israel','iran'], pulse:'iran' },
-  // 6: 12-day war
-  { label:'12day',    arcs:[
-      { from:[35.7,51.4], to:[32.1,34.8], color:'#ef4444', count:550, label:'550 BMs + 1,000 drones' },
-      { from:[32.1,34.8], to:[35.7,51.4], color:'#2563eb', count:1, offset:-14, label:'Israeli counter' },
-    ], highlights:['iran','israel'], pulse:'both' },
-  // 7: 2026 offensive + regional
-  { label:'2026',     arcs:[
-      { from:[32.1,34.8], to:[35.7,51.4], color:'#1d4ed8', count:1200, label:'US+Israel 1,200+ munitions' },
-      { from:[35.7,51.4], to:[32.1,34.8], color:'#ef4444', count:320, offset:-16, label:'Iran retaliation' },
-      { from:[35.7,51.4], to:[26.2,50.6], color:'#f87171', count:1, offset:8, label:'Iran → Bahrain' },
-      { from:[35.7,51.4], to:[25.3,51.5], color:'#f87171', count:1, offset:-8, label:'Iran → Qatar' },
-      { from:[35.7,51.4], to:[25.2,55.3], color:'#f87171', count:1, offset:12, label:'Iran → UAE' },
-    ], highlights:['iran','israel','bahrain','qatar','uae'], pulse:'both' },
-  // 8: aftermath / toll
-  { label:'toll',     arcs:[], highlights:['iran','israel'], pulse:null, showToll:true },
-];
-
-// ─── ANIMATION STATE ───────────────────────────────────────
-let currentStep = 0;
-let animArcProgress = {}; // { arcKey: 0..1 }
-let animRaf;
-let pulseT = 0;
-
-function resizeCanvas() {
-  const col = document.querySelector('.graphic-col');
-  canvas.width  = col.offsetWidth;
-  canvas.height = col.offsetHeight;
-  drawFrame();
-}
-
-// ─── DRAW ───────────────────────────────────────────────────
-function drawFrame() {
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0,0,W,H);
-
-  // BG gradient
-  const bg = ctx.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#0c1520'); bg.addColorStop(1,'#0e1a2e');
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-
-  // Grid
-  ctx.strokeStyle = 'rgba(30,50,90,0.35)'; ctx.lineWidth = .5;
-  for(let lng=30;lng<=64;lng+=5){ const {x}=geo(30,lng); ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
-  for(let lat=22;lat<=42;lat+=5){ const {y}=geo(lat,40); ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
-
-  // Water
-  WATER.forEach(w=>{
-    ctx.beginPath();
-    w.pts.forEach(([la,ln],i)=>{ const {x,y}=geo(la,ln); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-    ctx.closePath();
-    ctx.fillStyle='rgba(15,60,120,0.28)'; ctx.fill();
-  });
-
-  // Land
-  const state = STATES[currentStep] || STATES[0];
-  LAND.forEach(r=>{
-    const hl = state.highlights && state.highlights.includes(r.id);
-    ctx.beginPath();
-    r.pts.forEach(([la,ln],i)=>{ const {x,y}=geo(la,ln); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-    ctx.closePath();
-    ctx.fillStyle = hl ? (r.id==='iran'?'#1c3d2a':r.id==='israel'?'#132040':'#1c2a1c') : r.fill;
-    ctx.fill();
-    ctx.strokeStyle = hl ? (r.id==='iran'?'#22c55e':r.id==='israel'?'#3b82f6':'#4ade80') : r.stroke;
-    ctx.lineWidth = hl ? 1.2 : .6;
-    ctx.stroke();
-  });
-
-  // Arcs
-  if(state.arcs) {
-    state.arcs.forEach((arc, i)=>{
-      const key = `${currentStep}-${i}`;
-      const prog = animArcProgress[key] ?? 0;
-      drawArc(arc, prog);
+    const monthly = [18, 29, 41, 57, 63, 74];
+    const bars = monthly.map((v) => {
+      const b = document.createElement('div');
+      b.className = 'bar';
+      b.style.height = '8px';
+      barsWrap.appendChild(b);
+      return b;
     });
-  }
 
-  // Pulse effect on target
-  if(state.pulse && pulseT > 0) {
-    const pulseSites = state.pulse==='both' ? [[32.1,34.8],[35.7,51.4]] :
-                       state.pulse==='israel' ? [[32.1,34.8]] : [[35.7,51.4]];
-    pulseSites.forEach(([la,ln])=>{
-      const {x,y} = geo(la,ln);
-      const r = 18 + 14 * Math.sin(pulseT * .08);
-      const alpha = .5 - .4 * Math.abs(Math.sin(pulseT * .08));
-      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-      const pColor = state.pulse==='israel' ? `rgba(239,68,68,${alpha})` : `rgba(59,130,246,${alpha})`;
-      ctx.strokeStyle=pColor; ctx.lineWidth=1.5; ctx.stroke();
-    });
-  }
-
-  // Cities
-  drawCities(state);
-
-  // Toll overlay
-  if(state.showToll) drawTollOverlay(W,H);
-
-  // Step label overlay
-  drawStepLabel(state, W, H);
-}
-
-function drawArc(arc, progress) {
-  if(progress <= 0) return;
-  const f = geo(arc.from[0], arc.from[1]);
-  const t = geo(arc.to[0],   arc.to[1]);
-  const offset = arc.offset || 0;
-  const cpX = (f.x+t.x)/2 + offset;
-  const cpY = (f.y+t.y)/2 - 80;
-
-  const steps = 80;
-  const end = Math.round(progress * steps);
-
-  // Glow line
-  ctx.beginPath();
-  ctx.setLineDash([3,5]);
-  ctx.lineWidth = arc.count > 100 ? 2.5 : 1.5;
-  ctx.strokeStyle = arc.color + (progress<1 ? 'cc' : '88');
-  let lx, ly;
-  for(let i=0;i<=end;i++){
-    const tt=i/steps;
-    const x=(1-tt)*(1-tt)*f.x+2*(1-tt)*tt*cpX+tt*tt*t.x;
-    const y=(1-tt)*(1-tt)*f.y+2*(1-tt)*tt*cpY+tt*tt*t.y;
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); lx=x; ly=y;
-  }
-  ctx.stroke(); ctx.setLineDash([]);
-
-  // Missile head
-  if(progress < 1 && lx != null) {
-    ctx.beginPath(); ctx.arc(lx,ly,5,0,Math.PI*2);
-    ctx.fillStyle=arc.color; ctx.fill();
-    ctx.beginPath(); ctx.arc(lx,ly,9,0,Math.PI*2);
-    ctx.fillStyle=arc.color+'40'; ctx.fill();
-  }
-
-  // Impact ring
-  if(progress >= 1) {
-    ctx.beginPath(); ctx.arc(t.x,t.y,8,0,Math.PI*2);
-    ctx.fillStyle=arc.color+'30'; ctx.fill();
-    ctx.beginPath(); ctx.arc(t.x,t.y,4,0,Math.PI*2);
-    ctx.fillStyle=arc.color; ctx.fill();
-
-    // Label
-    ctx.font = `500 11px 'IBM Plex Mono', monospace`;
-    ctx.fillStyle='rgba(255,255,255,0.7)';
-    ctx.fillText(arc.label, t.x+10, t.y-6);
-  }
-}
-
-function drawCities(state) {
-  CITIES.forEach(c=>{
-    const {x,y}=geo(c.lat,c.lng);
-    const color = c.side==='iran'?'#4ade80':c.side==='israel'?'#60a5fa':'#94a3b8';
-    ctx.beginPath(); ctx.arc(x,y,c.big||c.nuke?4:2.5,0,Math.PI*2);
-    ctx.fillStyle=color; ctx.fill();
-    if(c.nuke){
-      ctx.beginPath(); ctx.arc(x,y,9,0,Math.PI*2);
-      ctx.strokeStyle='#ef4444'; ctx.lineWidth=1; ctx.stroke();
-    }
-    ctx.font=`500 10px 'IBM Plex Mono',monospace`;
-    ctx.fillStyle='rgba(200,220,255,0.65)';
-    ctx.fillText(c.name, x+7, y-3);
-  });
-}
-
-function drawTollOverlay(W, H) {
-  ctx.fillStyle='rgba(10,16,28,0.5)';
-  ctx.fillRect(W*.04, H*.1, W*.55, H*.8);
-  ctx.strokeStyle='rgba(200,200,200,0.15)'; ctx.lineWidth=1;
-  ctx.strokeRect(W*.04, H*.1, W*.55, H*.8);
-
-  const ox=W*.08, oy=H*.18;
-  ctx.font=`600 11px 'IBM Plex Mono',monospace`; ctx.fillStyle='rgba(255,255,255,0.4)';
-  ctx.fillText('HUMAN TOLL · ALL EPISODES · 2024–2026', ox, oy);
-
-  const items=[
-    ['🇮🇷 Iran killed',     '1,190+', '#ef4444'],
-    ['🇮🇱 Israel killed',   '28',     '#60a5fa'],
-    ['🇺🇸 US soldiers',    '6',      '#fbbf24'],
-    ['🌍 Regional',         '9+',     '#a78bfa'],
-    ['Wounded (Iran)',       '4,700+', '#f87171'],
-  ];
-  items.forEach(([label, val, col],i)=>{
-    const y2 = oy + 38 + i*54;
-    ctx.font=`400 12px 'IBM Plex Mono',monospace`; ctx.fillStyle='rgba(200,220,255,0.55)';
-    ctx.fillText(label, ox, y2);
-    ctx.font=`600 ${i<2?30:22}px 'Frank Ruhl Libre',serif`; ctx.fillStyle=col;
-    ctx.fillText(val, ox, y2+28);
-  });
-}
-
-function drawStepLabel(state, W, H) {
-  const LABELS = [
-    'The Region · Before', 'Apr 13–14, 2024 · Op. True Promise I',
-    'Apr 18, 2024 · Israeli reply', 'Oct 1, 2024 · Op. True Promise II',
-    'Oct 26, 2024 · Israel destroys Iran S-300', 'Jun 13, 2025 · Op. Rising Lion',
-    'Jun 13–24, 2025 · The 12-Day War', 'Feb 28 – Mar 5, 2026 · US+Israel Offensive',
-    'Mar 5, 2026 · The Toll'
-  ];
-  const lbl = LABELS[currentStep] || '';
-  const dots = STATES.length;
-  // draw chapter counter bottom-right
-  ctx.font=`500 11px 'IBM Plex Mono',monospace`;
-  ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.textAlign='right';
-  ctx.fillText(lbl, W-16, H-18);
-
-  // step dots
-  const dotW=10, gap=6, total=dots*(dotW+gap)-gap;
-  const sx=(W-total)/2, sy=H-12;
-  STATES.forEach((_,i)=>{
-    ctx.beginPath(); ctx.arc(sx+i*(dotW+gap)+dotW/2, sy, i===currentStep?5:3, 0, Math.PI*2);
-    ctx.fillStyle= i===currentStep?'#ef4444':'rgba(255,255,255,0.2)'; ctx.fill();
-  });
-  ctx.textAlign='left';
-}
-
-// ─── ANIMATION LOOP ─────────────────────────────────────────
-let animRunning = false;
-function startAnimation(step) {
-  cancelAnimationFrame(animRaf);
-  // Reset arcs for this step
-  const state = STATES[step];
-  if(state.arcs) {
-    state.arcs.forEach((_,i)=>{ animArcProgress[`${step}-${i}`]=0; });
-  }
-  pulseT=0; animRunning=true;
-  function tick() {
-    pulseT++;
-    const state2=STATES[step];
-    let anyMoving=false;
-    if(state2.arcs){
-      state2.arcs.forEach((_,i)=>{
-        const key=`${step}-${i}`;
-        const delay=i*20;
-        if(pulseT>delay) {
-          animArcProgress[key]=Math.min(1,(animArcProgress[key]||0)+.018);
-          if(animArcProgress[key]<1) anyMoving=true;
-        }
+    function animateCounters() {
+      counters.forEach((el) => {
+        const target = Number(el.dataset.count || 0);
+        let n = 0;
+        const step = Math.max(1, Math.round(target / 60));
+        const tick = () => {
+          n += step;
+          if (n >= target) n = target;
+          el.textContent = n.toLocaleString();
+          if (n < target) requestAnimationFrame(tick);
+        };
+        tick();
       });
     }
-    drawFrame();
-    if(anyMoving || pulseT<200) animRaf=requestAnimationFrame(tick);
-  }
-  animRaf=requestAnimationFrame(tick);
-}
 
-function setStep(step) {
-  if(step===currentStep) return;
-  currentStep=step;
-  startAnimation(step);
-  // Update text steps
-  document.querySelectorAll('.step').forEach((el,i)=>{
-    el.classList.toggle('is-active', i===step);
-  });
-}
+    function setStep(activeStep) {
+      const activeMap = activeStep.dataset.map;
+      const activeCaption = activeStep.dataset.caption;
+      steps.forEach((step) => step.classList.toggle('active', step === activeStep));
+      districts.forEach((d) => d.classList.toggle('active', d.id === activeMap));
+      caption.textContent = activeCaption;
+    }
 
-// ─── SCROLL DRIVER ──────────────────────────────────────────
-function onScroll() {
-  const scrollY = window.scrollY;
-  const docH = document.documentElement.scrollHeight - window.innerHeight;
-  document.getElementById('progressFill').style.height = (scrollY/docH*100)+'%';
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setStep(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
 
-  const steps = document.querySelectorAll('.step');
-  steps.forEach((el,i)=>{
-    const rect=el.getBoundingClientRect();
-    const mid=rect.top+rect.height/2;
-    if(mid < window.innerHeight*0.65 && mid > 0) setStep(i);
-  });
+    steps.forEach((step) => observer.observe(step));
+    setStep(steps[0]);
 
-  // Reveal
-  document.querySelectorAll('.reveal').forEach(el=>{
-    if(el.getBoundingClientRect().top < window.innerHeight*.88) el.classList.add('in');
-  });
-}
+    function renderTimeline(index) {
+      monthLabel.textContent = `Month ${index + 1}`;
+      intensity.textContent = `Intensity: ${monthly[index]}%`;
+      bars.forEach((bar, i) => {
+        const h = i <= index ? Math.max(12, monthly[i] * 1.6) : 8;
+        bar.style.height = `${h}px`;
+        bar.style.opacity = i <= index ? '1' : '.35';
+      });
+    }
 
-// ─── INIT ───────────────────────────────────────────────────
-window.addEventListener('resize',()=>{ resizeCanvas(); });
-window.addEventListener('scroll', onScroll, { passive:true });
+    range.addEventListener('input', () => renderTimeline(Number(range.value)));
+    renderTimeline(0);
 
-setTimeout(()=>{
-  resizeCanvas();
-  startAnimation(0);
-  onScroll();
-},120);
-</script>
+    compare.addEventListener('input', () => {
+      afterLayer.style.width = `${compare.value}%`;
+    });
+
+    let counterStarted = false;
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !counterStarted) {
+          counterStarted = true;
+          animateCounters();
+        }
+      });
+    }, { threshold: 0.4 });
+    countObserver.observe(document.querySelector('.lead-grid'));
+
+    document.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      progress.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    }, { passive: true });
+  </script>
 </body>
 </html>
