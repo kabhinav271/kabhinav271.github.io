@@ -1,417 +1,2077 @@
-﻿<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ground Shift: Interactive Story</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEAM BELL — 800 Years of Mannar Bell Metal</title>
+
+  <!-- Google Fonts: Inter & Fraunces matching exact Figma tokens -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=Just+Me+Again+Down+Here&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Fraunces', 'serif'],
+            handwriting: ['"Just Me Again Down Here"', 'cursive']
+          },
+          colors: {
+            sand: '#F4EEE2',
+            sandlight: '#F9F3E5',
+            linen: '#F5EAD4',
+            bronze: '#B48E41',
+            bronzestroke: '#9F7038',
+            deepbrown: '#3A1F02',
+            deepbronze: '#2F1F18',
+            charcoal: '#0D0F04',
+            terracotta: '#D05534',
+            lightgray: '#D0D0C4'
+          }
+        }
+      }
+    };
+  </script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,700&display=swap');
-    :root {
-      --bg: #12110e;
-      --paper: #1a1915;
-      --ink: #f1ecdf;
-      --muted: #b4ab96;
-      --line: #353126;
-      --accent: #d6723a;
-      --accent-soft: #7d4f34;
-      --danger: #d2452f;
-      --ok: #5a9e64;
+    /* Exact Bell Physical Micro-Sway Animation */
+    @keyframes bellSway {
+      0% { transform: rotate(0deg); }
+      15% { transform: rotate(3.5deg); }
+      30% { transform: rotate(-3deg); }
+      45% { transform: rotate(1.8deg); }
+      60% { transform: rotate(-1deg); }
+      80% { transform: rotate(0.4deg); }
+      100% { transform: rotate(0deg); }
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: radial-gradient(1200px 800px at 20% -20%, #2a2419 0%, var(--bg) 50%); color: var(--ink); }
-    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; line-height: 1.5; }
-    .progress {
-      position: fixed; top: 0; left: 0; height: 4px; width: 0;
-      background: linear-gradient(90deg, #c85e28, #ef9b52);
-      z-index: 999;
+    .animate-bell-sway {
+      animation: bellSway 1.6s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important;
     }
-    .topbar {
-      position: sticky; top: 0; z-index: 90;
-      backdrop-filter: blur(8px);
-      background: rgba(18, 17, 14, 0.72);
-      border-bottom: 1px solid var(--line);
-    }
-    .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 12px 22px; display: flex; justify-content: space-between; align-items: center; }
-    .brand { font-weight: 700; letter-spacing: .06em; font-size: 12px; text-transform: uppercase; color: #dbc7a8; }
-    .kicker { color: #c8b896; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
 
-    .hero {
-      min-height: 68vh;
-      display: grid;
-      place-items: end center;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 1px solid var(--line);
+    /* Tactile Hover Shivering / Quiver (Subtle Whisper Affordance: 0.7s, -0.2deg to 0.15deg) */
+    @keyframes bellShiver {
+      0% {
+        transform: rotate(0deg) translate(0, 0);
+      }
+      20% {
+        transform: rotate(-0.2deg) translate(-0.15px, 0.05px);
+      }
+      40% {
+        transform: rotate(0.15deg) translate(0.12px, -0.05px);
+      }
+      60% {
+        transform: rotate(-0.12deg) translate(-0.08px, 0.04px);
+      }
+      80% {
+        transform: rotate(0.1deg) translate(0.08px, -0.03px);
+      }
+      100% {
+        transform: rotate(0deg) translate(0, 0);
+      }
     }
-    .hero::before {
-      content: "";
+
+    #bell-trigger:hover:not(.animate-bell-sway) {
+      animation: bellShiver 0.7s ease-in-out infinite;
+    }
+
+    #bell-trigger:hover img {
+      filter: drop-shadow(0px 0px 14px rgba(180, 142, 65, 0.45)) drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.28)) !important;
+      transition: filter 300ms ease;
+    }
+
+    /* Tactile Soft Water-Droplet Ripple Effect */
+    @keyframes softWaterRipple {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 0.95;
+        filter: blur(2px);
+      }
+      50% {
+        opacity: 0.55;
+        filter: blur(6px);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.8);
+        opacity: 0;
+        filter: blur(14px);
+      }
+    }
+
+    .water-ripple-ring {
       position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)),
-        radial-gradient(800px 380px at 66% 25%, rgba(214,114,58,.35), transparent 60%),
-        repeating-linear-gradient(115deg, #201d16 0 7px, #171510 7px 14px);
-      transform: scale(1.06);
-    }
-    .hero-inner {
-      max-width: 1180px;
-      width: 100%;
-      padding: 72px 22px 52px;
-      position: relative;
-      z-index: 1;
-    }
-    h1 {
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: clamp(2rem, 6vw, 4.2rem);
-      line-height: .97;
-      letter-spacing: -.01em;
-      margin: 0;
-      max-width: 900px;
-      text-wrap: balance;
-    }
-    .dek {
-      color: var(--muted);
-      max-width: 760px;
-      margin-top: 18px;
-      font-size: clamp(1rem, 2vw, 1.24rem);
-    }
-    .byline {
-      margin-top: 22px;
-      color: #d7c8a9;
-      font-size: 13px;
-      letter-spacing: .02em;
+      left: 50%;
+      top: 50%;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.2);
+      pointer-events: none;
+      box-shadow: 
+        0 0 15px 4px rgba(255, 255, 255, 0.45),
+        inset 0 0 12px 3px rgba(0, 0, 0, 0.12),
+        0 8px 24px rgba(60, 40, 20, 0.08);
+      background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.02) 0%,
+        rgba(255, 255, 255, 0.18) 70%,
+        rgba(0, 0, 0, 0.06) 100%
+      );
+      animation: softWaterRipple 2.4s cubic-bezier(0.16, 0.8, 0.25, 1) both;
     }
 
-    .container { max-width: 1180px; margin: 0 auto; padding: 34px 22px; }
-
-    .lead-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 14px;
-      margin-top: 16px;
-    }
-    .metric {
-      background: linear-gradient(160deg, #201d16, #17150f);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
-    }
-    .metric .num { font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 700; color: #f6d3a4; }
-    .metric .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
-
-    .story-shell {
-      display: grid;
-      grid-template-columns: minmax(280px, 1fr) minmax(320px, 520px);
-      gap: 26px;
-      align-items: start;
-      margin-top: 36px;
-    }
-    .sticky-panel {
-      position: sticky;
-      top: 74px;
-      min-height: 74vh;
-      background: linear-gradient(180deg, #181610, #14130f);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      overflow: hidden;
-    }
-    .mapbox {
-      height: 62vh;
-      background: radial-gradient(440px 260px at 50% 20%, rgba(214,114,58,.18), transparent 70%), #191710;
-      border-radius: 10px;
-      border: 1px solid #2d291f;
-      position: relative;
-      overflow: hidden;
-    }
-    .map-caption { margin-top: 10px; color: var(--muted); font-size: 13px; }
-    .district { fill: #3f3727; stroke: #8e7b56; stroke-width: 1.2; transition: all .25s ease; }
-    .district.active { fill: #d6723a; stroke: #ffd7b1; filter: drop-shadow(0 0 12px rgba(214,114,58,.5)); }
-
-    .steps { display: grid; gap: 20px; }
-    .step {
-      min-height: 72vh;
-      padding: 22px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: linear-gradient(160deg, #1f1c15, #17150f);
-      opacity: .45;
-      transform: translateY(8px);
-      transition: opacity .25s ease, transform .25s ease, border-color .25s ease;
-    }
-    .step.active { opacity: 1; transform: translateY(0); border-color: #6a5736; }
-    .step h2 {
-      margin: 0 0 8px;
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: clamp(1.5rem, 2.6vw, 2rem);
-      line-height: 1.1;
-    }
-    .step p { color: #d2c7b0; margin: 0 0 16px; }
-    .chip {
-      display: inline-flex; align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #6a5736;
-      background: rgba(214,114,58,.1);
-      color: #f0c99e;
-      font-size: 12px;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      font-weight: 600;
+    /* 60fps Butter-Smooth Transitions */
+    .transition-smooth {
+      transition: all 900ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .timeline {
-      margin-top: 34px;
-      border: 1px solid var(--line);
-      background: linear-gradient(170deg, #1d1b14, #14120d);
-      border-radius: 14px;
-      padding: 20px;
+    /* Hide horizontal and vertical scrollbars while maintaining scroll functionality */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
-    .timeline h3 { margin: 0 0 8px; font-size: 1.1rem; font-family: 'Newsreader', Georgia, serif; }
-    .timeline p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
-    .range { width: 100%; accent-color: var(--accent); }
-    .bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 14px; align-items: end; height: 140px; }
-    .bar { background: linear-gradient(180deg, #efb37b, #b66132); border-radius: 6px 6px 3px 3px; min-height: 8px; transition: height .35s ease; }
-    .monthline { display: flex; justify-content: space-between; color: var(--muted); margin-top: 8px; font-size: 12px; }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-    .compare {
-      margin-top: 34px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 20px;
-      background: linear-gradient(170deg, #201d16, #15130e);
+    /* Seamless Infinite Marquee for Meet the Makers */
+    @keyframes makersMarquee {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
     }
-    .compare h3 { margin: 0 0 12px; font-family: 'Newsreader', Georgia, serif; }
-    .slider-wrap {
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid #3a3224;
-      height: min(46vw, 320px);
-      background: #0f0f0d;
+    .animate-makers-marquee {
+      display: flex;
+      width: max-content;
+      animation: makersMarquee 38s linear infinite;
+      will-change: transform;
     }
-    .scene-before,
-    .scene-after {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
+    .animate-makers-marquee:hover {
+      animation-play-state: paused;
     }
-    .scene-before {
-      background-image: repeating-linear-gradient(130deg, #3f3a2e 0 12px, #2a271f 12px 24px);
-    }
-    .scene-after {
-      background-image: repeating-linear-gradient(130deg, #4f2a20 0 12px, #321a15 12px 24px);
-      width: 50%;
-      overflow: hidden;
-      border-right: 2px solid #ffd1ad;
-      box-shadow: 0 0 20px rgba(255,184,135,.35);
-    }
-    .compare input { width: 100%; margin-top: 12px; accent-color: #f39556; }
-    .labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
 
-    .footer { margin-top: 36px; color: #a89b83; font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
-
-    @media (max-width: 920px) {
-      .lead-grid { grid-template-columns: 1fr; }
-      .story-shell { grid-template-columns: 1fr; }
-      .sticky-panel { position: relative; top: 0; min-height: auto; }
-      .mapbox { height: 340px; }
-      .step { min-height: 58vh; }
-      .topbar-inner { padding: 10px 14px; }
-      .container, .hero-inner { padding-left: 14px; padding-right: 14px; }
+    /* Active state for touchscreen mobile interaction */
+    .active-hotspot .hotspot-popover {
+      opacity: 1 !important;
+      transform: scale(1) !important;
+      pointer-events: auto !important;
     }
   </style>
 </head>
-<body>
-  <div class="progress" id="progress"></div>
 
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">Interactive Desk</div>
-      <div class="kicker">Ground Change Tracker</div>
+<body
+  id="viewport-body"
+  class="relative w-full min-h-screen overflow-x-hidden select-none bg-[#F4EEE2] text-[#0D0F04] font-sans transition-colors duration-1000 ease-out"
+>
+
+  <!-- ========================================================================= -->
+  <!-- TOP RIGHT NAVIGATION BAR (Explore, Experience, Community)                 -->
+  <!-- Aligned strictly to the 1200px content grid boundary (never exceeds)       -->
+  <!-- ========================================================================= -->
+  <div class="fixed top-5 md:top-7 inset-x-0 w-full z-50 pointer-events-none flex justify-center px-6 md:px-12 lg:px-[120px]">
+    <div class="w-full max-w-[1200px] flex justify-end">
+      <nav
+        id="top-navbar"
+        class="pointer-events-auto flex items-center gap-2 sm:gap-4 md:gap-6 px-3 py-1.5 rounded-full transition-all duration-300 select-none"
+        aria-label="Main Navigation"
+      >
+        <a
+          href="#heritage-showcase"
+          onclick="event.preventDefault(); document.getElementById('heritage-showcase').scrollIntoView({ behavior: 'smooth' });"
+          class="font-sans font-medium text-[15px] md:text-[16px] text-[#3A1F02] hover:text-[#0D0F04] hover:bg-[#EBE3D6] px-3.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer"
+        >
+          Explore
+        </a>
+        <a
+          href="#workshops"
+          onclick="event.preventDefault(); document.getElementById('workshops').scrollIntoView({ behavior: 'smooth' });"
+          class="font-sans font-medium text-[15px] md:text-[16px] text-[#3A1F02] hover:text-[#0D0F04] hover:bg-[#EBE3D6] px-3.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer"
+        >
+          Experience
+        </a>
+        <a
+          href="#community"
+          onclick="event.preventDefault(); document.getElementById('community').scrollIntoView({ behavior: 'smooth' });"
+          class="font-sans font-medium text-[15px] md:text-[16px] text-[#3A1F02] hover:text-[#0D0F04] hover:bg-[#EBE3D6] px-3.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer"
+        >
+          Community
+        </a>
+      </nav>
     </div>
   </div>
 
-  <section class="hero">
-    <div class="hero-inner">
-      <h1>Inside A Neighborhood’s Rapid Transformation</h1>
-      <p class="dek">A scroll-driven visual report showing how one dense urban corridor changed block by block over six months.</p>
-      <div class="byline">By Data Visual Team | March 5, 2026</div>
+  <!-- ========================================================================= -->
+  <!-- 200VH FIXED HERO VIEWPORT (Page 1 & Page 2 Interactive Canvas)            -->
+  <!-- ========================================================================= -->
+  <div id="hero-fixed-container" class="fixed inset-0 w-full h-screen pointer-events-none z-10 overflow-hidden">
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 0: BACKGROUND PADDY FIELD ENGRAVING (Figma node #127:687 / #127:711) -->
+  <!-- Exact Figma tokens: Page 1 opacity 0.25, Page 2 opacity 0.15, full width   -->
+  <!-- ========================================================================= -->
+  <div
+    id="backdrop-container"
+    class="absolute inset-x-0 w-full pointer-events-none transition-smooth z-0 overflow-hidden"
+    style="top: 262px; height: 1037px;"
+    aria-hidden="true"
+  >
+    <img
+      id="backdrop-img"
+      src="./assets/bg_sep24.png"
+      alt="Mannar Paddy Field Heritage Engraving"
+      class="w-full h-full object-cover object-top pointer-events-none transition-smooth"
+      style="opacity: 0.25; mix-blend-mode: multiply;"
+      draggable="false"
+    />
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 1: 1:1 FIGMA TOP WOODEN BEAM (Figma node #80:3321 / #85:5947)       -->
+  <!-- ========================================================================= -->
+  <header
+    id="wooden-beam-header"
+    class="absolute top-0 left-0 right-0 pointer-events-none z-30 w-full overflow-visible transition-smooth"
+    aria-hidden="true"
+  >
+    <img
+      src="./assets/wooden_beam_mask.png"
+      alt="Top wooden beam rafter from Figma mask group"
+      class="w-full h-auto object-cover object-top pointer-events-none"
+      style="display: block; width: 100%; max-height: 95px; min-height: 52px; filter: drop-shadow(0px 10px 7.5px rgba(0, 0, 0, 0.25));"
+    />
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN 1440PX CANVAS VIEWPORT WRAPPER                                       -->
+  <!-- ========================================================================= -->
+  <main class="relative w-full h-full max-w-[1440px] mx-auto overflow-hidden">
+
+    <!-- ======================================================================= -->
+    <!-- SECONDARY BACKGROUND BELL (Page 2 Only, Figma Node #136:980)             -->
+    <!-- Coordinates: x: 333.76px, y: -202.15px, width: 224.67px, height: 493.93px-->
+    <!-- ======================================================================= -->
+    <div
+      id="secondary-bell"
+      class="absolute z-15 pointer-events-none transition-smooth opacity-0 scale-90"
+      style="left: 333.76px; top: -202.15px; width: 224.67px; height: 493.93px; transform-origin: top center;"
+    >
+      <img
+        src="./assets/bell_hero.png"
+        alt="Secondary suspended bronze bell"
+        class="w-full h-full object-contain pointer-events-none brightness-95 opacity-80"
+        style="filter: drop-shadow(0px 2.49px 2.49px rgba(0, 0, 0, 0.25));"
+        draggable="false"
+      />
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- PRIMARY INTERACTIVE BELL (Figma Node #83:4670 -> #85:5312)              -->
+    <!-- Page 1: x: 67.59px, y: -480.9px, width: 545.16px, height: 1272.76px     -->
+    <!-- Page 2: x: 172.49px, y: -99.26px, width: 339.1px, height: 791.69px      -->
+    <!-- ======================================================================= -->
+    <div
+      id="bell-anchor"
+      class="absolute z-20 flex flex-col items-center pointer-events-none transition-smooth"
+      style="left: 67.59px; top: -480.9px; width: 545.16px; height: 1272.76px; transform-origin: top center;"
+    >
+      <!-- Interactive Clickable Bell Trigger -->
+      <div
+        id="bell-trigger"
+        class="relative w-full h-full pointer-events-auto cursor-pointer group"
+        style="transform-origin: 50% 0%;"
+        role="button"
+        tabindex="0"
+        aria-label="Strike Kansyam bronze bell"
+        title="Click or tap to strike bell"
+      >
+        <!-- Bell Graphic -->
+        <img
+          src="./assets/bell_hero.png"
+          alt="Hand-forged Kansyam bell metal bell from Mannar"
+          class="w-full h-full object-contain pointer-events-none transition-all duration-300 group-hover:brightness-105"
+          style="filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));"
+          draggable="false"
+        />
+
+        <!-- Water-Droplet Ripples Origin (Clapper / Rim) -->
+        <div
+          id="ripple-container"
+          class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style="top: 61.5%; width: 360px; height: 360px;"
+        ></div>
+      </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- PAGE 1: SENSORY STRIKE HERO VIEW (Figma Frame 2, Node #79:760)          -->
+    <!-- ======================================================================= -->
+    <section
+      id="page-1"
+      class="absolute inset-0 pointer-events-none z-25 transition-smooth opacity-100"
+    >
+      <!-- Prompt Micro-Copy (#79:1398) -->
+      <!-- Coordinates: x: 438.69px, y: 111.36px, width: 220.7px, height: 60px -->
+      <div
+        id="prompt-badge"
+        class="absolute pointer-events-auto transition-smooth"
+        style="left: 438.69px; top: 111.36px; width: 220.7px; height: 60px;"
+      >
+        <p
+          class="select-none"
+          style="font-family: 'Inter', sans-serif; font-size: 20px; line-height: 1.5em; letter-spacing: 0.01em;"
+        >
+          <span class="text-[#B48E41] font-normal">Touch to Strike. Hear 800 Years of </span><span class="text-[#3A1F02] font-semibold">Mannar</span>
+        </p>
+      </div>
+
+      <!-- Curved Vector Arrow (#81:3327) -->
+      <!-- Coordinates: x: 402.32px, y: 160.51px, width: 172.46px, height: 172.46px -->
+      <div
+        id="pointer-arrow"
+        class="absolute pointer-events-none transition-smooth"
+        style="left: 402.32px; top: 160.51px; width: 172.46px; height: 172.46px;"
+      >
+        <img
+          src="./assets/pointer_arrow.svg"
+          alt="Indicator arrow pointing to bell rim"
+          class="w-full h-full object-contain"
+          draggable="false"
+        />
+      </div>
+
+      <!-- Hero Welcome Card (#124:3) -->
+      <!-- Coordinates: x: 686px, y: 197px, width: 766px, padding: 63px 41px, gap: 40px -->
+      <div
+        id="hero-card"
+        class="absolute pointer-events-auto flex flex-col justify-center transition-smooth"
+        style="
+          left: 686px;
+          top: 197px;
+          width: 766px;
+          padding: 63px 41px;
+          gap: 40px;
+          background: radial-gradient(circle at 41% 49%, rgba(244, 238, 226, 1) 0%, rgba(245, 239, 227, 1) 60%, rgba(246, 239, 227, 0) 100%);
+        "
+      >
+        <!-- Heading Block (#127:707) -->
+        <div class="flex flex-col" style="width: 608px; gap: 16px;">
+          <!-- Headline (#127:708) -->
+          <h1
+            class="uppercase select-none"
+            style="
+              font-family: 'Fraunces', serif;
+              font-size: 60px;
+              line-height: 1.2em;
+              letter-spacing: 0.02em;
+              font-weight: 600;
+            "
+          >
+            <span style="color: #D05534;">Welcome</span><br />
+            <span style="color: #3A1F02;">to BELL METAL CAPITAL of </span><span style="font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: #3A1F02; text-transform: capitalize;">India</span>
+          </h1>
+
+          <!-- Subtitle (#127:709) -->
+          <p
+            style="
+              font-family: 'Inter', sans-serif;
+              font-size: 20px;
+              line-height: 1.5em;
+              letter-spacing: 0.01em;
+              font-weight: 400;
+              color: #3A1F02;
+            "
+          >
+            Celebrating craftsmanship with natural textures, organic forms, and earthy tones for every space.
+          </p>
+        </div>
+
+        <!-- Button Group (#124:5) -->
+        <div class="flex items-center" style="gap: 16px;">
+          <!-- Explore Button (#124:6) -->
+          <button
+            id="btn-explore"
+            onclick="document.getElementById('heritage-showcase').scrollIntoView({ behavior: 'smooth' });"
+            class="transition-all duration-200 hover:brightness-110 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm"
+            style="
+              width: 120px;
+              height: 48px;
+              padding: 8px 12px;
+              background: #2F1F18;
+              border-radius: 8px;
+              color: #D0D0C4;
+              font-family: 'Inter', sans-serif;
+              font-size: 16px;
+              line-height: 1.6em;
+              letter-spacing: 0.02em;
+              font-weight: 500;
+            "
+          >
+            Explore
+          </button>
+
+          <!-- Experience Button (#124:8) -->
+          <button
+            id="btn-experience"
+            class="transition-all duration-200 bg-transparent hover:!bg-[#EBE3D6] active:scale-95 flex items-center justify-center cursor-pointer shadow-sm"
+            style="
+              width: 120px;
+              height: 48px;
+              padding: 8px 12px;
+              border: 1px solid #3A1F02;
+              border-radius: 8px;
+              color: #3A1F02;
+              font-family: 'Inter', sans-serif;
+              font-size: 16px;
+              line-height: 1.6em;
+              letter-spacing: 0.02em;
+              font-weight: 500;
+            "
+          >
+            Experience
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- PAGE 2: ARTISAN & COMMUNITY GLIMPSE VIEW (Figma Frame 4, Node #85:5308) -->
+    <!-- ======================================================================= -->
+    <section
+      id="page-2"
+      class="absolute inset-0 pointer-events-none z-25 transition-smooth opacity-0 translate-y-12"
+    >
+      <!-- Community Story Card (#136:979) -->
+      <!-- Coordinates: x: 726px, y: 226.5px, width: 478px, padding: 40px, gap: 24px -->
+      <div
+        id="community-card"
+        class="absolute pointer-events-auto flex flex-col transition-smooth"
+        style="
+          left: 726px;
+          top: 226.5px;
+          width: 478px;
+          padding: 40px;
+          gap: 24px;
+          background: radial-gradient(circle at 55% 50%, rgba(249, 243, 229, 1) 0%, rgba(245, 239, 227, 1) 35%, rgba(246, 239, 227, 0) 100%);
+        "
+      >
+        <!-- Subframe #86:6025 (width: 420px, gap: 12px) -->
+        <div class="flex flex-col" style="width: 420px; gap: 12px;">
+          <!-- Sub-Frame #86:6024 (width: 389px, gap: 4px) -->
+          <div class="flex flex-col" style="width: 389px; gap: 4px;">
+            <!-- Subtitle #86:5951 -->
+            <span
+              class="uppercase"
+              style="
+                font-family: 'Inter', sans-serif;
+                font-size: 10px;
+                line-height: 1.5em;
+                letter-spacing: 0.03em;
+                font-weight: 400;
+                color: #3A1F02;
+              "
+            >
+              The community
+            </span>
+
+            <!-- Heading #86:5983 -->
+            <h2
+              style="
+                font-family: 'Fraunces', serif;
+                font-size: 40px;
+                line-height: 1.3em;
+                letter-spacing: 0.01em;
+                font-weight: 400;
+                color: #0D0F04;
+                width: 489.72px;
+              "
+            >
+              Forged by fire,<br />bound by kin.
+            </h2>
+          </div>
+
+          <!-- Body Paragraph #86:5984 -->
+          <p
+            style="
+              font-family: 'Inter', sans-serif;
+              font-size: 16px;
+              line-height: 1.6em;
+              letter-spacing: 0.02em;
+              font-weight: 400;
+              color: #3A1F02;
+            "
+          >
+            For centuries, Achary families in Mannar have crafted unique bell-metal items from a copper-tin alloy.<br />Today, only a few families continue the tradition, with each bell’s sound judged purely by ear
+          </p>
+        </div>
+
+        <!-- Feature List #136:978 (width: 313px, gap: 16px) -->
+        <div class="flex flex-col" style="width: 313px; gap: 16px;">
+          <!-- Feature Item 1 (#136:972) -->
+          <div class="flex items-center" style="gap: 8px;">
+            <img
+              src="./assets/icon_epicentre.svg"
+              alt="Checkmark"
+              class="w-6 h-6 shrink-0"
+              draggable="false"
+            />
+            <span
+              style="
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                line-height: 1.5em;
+                letter-spacing: 0.02em;
+                font-weight: 400;
+                color: #3A1F02;
+              "
+            >
+              Experience craft from the epi centre
+            </span>
+          </div>
+
+          <!-- Feature Item 2 (#136:965) -->
+          <div class="flex items-center" style="gap: 8px;">
+            <img
+              src="./assets/icon_community.svg"
+              alt="Checkmark"
+              class="w-6 h-6 shrink-0"
+              draggable="false"
+            />
+            <span
+              style="
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                line-height: 1.5em;
+                letter-spacing: 0.02em;
+                font-weight: 400;
+                color: #3A1F02;
+              "
+            >
+              Become a part of the community
+            </span>
+          </div>
+
+          <!-- Feature Item 3 (#136:966) -->
+          <div class="flex items-center" style="gap: 8px;">
+            <img
+              src="./assets/icon_purchase.svg"
+              alt="Checkmark"
+              class="w-6 h-6 shrink-0"
+              draggable="false"
+            />
+            <span
+              style="
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                line-height: 1.5em;
+                letter-spacing: 0.02em;
+                font-weight: 400;
+                color: #3A1F02;
+              "
+            >
+              Try it out before you purchase.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- BOTTOM SCROLL INDICATOR (#88:6819)                                      -->
+    <!-- Coordinates: x: 670px, y: 844.19px, width: 101px, height: 18px          -->
+    <!-- ======================================================================= -->
+    <footer
+      class="absolute z-40 pointer-events-auto transition-smooth"
+      style="left: 670px; top: 844px; width: 120px;"
+    >
+      <button
+        id="scroll-toggle"
+        class="group flex flex-col items-center gap-1 focus:outline-none cursor-pointer"
+        style="
+          font-family: 'Inter', sans-serif;
+          font-size: 12px;
+          line-height: 1.5em;
+          letter-spacing: 0.03em;
+          font-weight: 400;
+          color: #3A1F02;
+        "
+        title="Toggle view"
+      >
+        <span id="scroll-prompt-text" class="group-hover:text-[#B48E41] transition-colors">Keep listening ↓</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#B48E41] opacity-70 group-hover:scale-125 transition-transform"></span>
+      </button>
+    </footer>
+  </main>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TRANSPARENT 200VH HERO SCROLL SPACER                                      -->
+  <!-- ========================================================================= -->
+  <div class="w-full h-[200vh] pointer-events-none" aria-hidden="true"></div>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 3: 800 YEARS OF HERITAGE / PROCESS VIDEO (Figma Node #445:272)      -->
+  <!-- Background: #F5EAD4, 1200x675 (16:9), Video + Quote Overlay               -->
+  <!-- ========================================================================= -->
+  <section
+    id="heritage-showcase"
+    class="relative w-full z-40 bg-[#F5EAD4] flex justify-center items-center py-12 md:py-[112.5px] px-6 md:px-12 lg:px-[120px] shadow-2xl"
+  >
+    <!-- Central Video Container (Figma: 1200x675, 16:9, borderRadius: 16px) -->
+    <div class="relative w-full max-w-[1200px] aspect-[16/9] overflow-hidden rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.22)] bg-black group">
+      <!-- Process Video (assets/Process Trim.mp4) -->
+      <video
+        id="process-video"
+        src="./assets/Process%20Trim.mp4"
+        class="w-full h-full object-cover select-none pointer-events-auto"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="auto"
+      ></video>
+
+      <!-- Bottom Gradient Vignette for Text Contrast & Cinematic Polish -->
+      <div class="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-black/15 to-transparent"></div>
+
+      <!-- Quote Overlay Text (Figma Node #445:276: x: 221, y: 642.33, w: 316.42px) -->
+      <div
+        class="absolute pointer-events-none select-none left-6 sm:left-12 md:left-[101px] bottom-6 sm:bottom-10 md:bottom-[45px] max-w-[316.42px]"
+      >
+        <p
+          class="font-serif italic font-semibold text-[#F5EAD4] text-[15px] sm:text-[17px] md:text-[18px] leading-[1.3em] tracking-[0.01em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]"
+        >
+          “If the bell doesn’t sound the way we want, we melt it and make it again, until we get the sound just right”
+        </p>
+      </div>
+
+      <!-- Sound Toggle Control (Mute / Unmute) -->
+      <button
+        id="video-sound-toggle"
+        type="button"
+        aria-label="Unmute video"
+        class="absolute z-20 right-6 sm:right-12 md:right-[60px] bottom-6 sm:bottom-10 md:bottom-[45px] flex items-center gap-2.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-black/60 hover:bg-black/85 active:scale-95 backdrop-blur-md border border-[#F5EAD4]/30 hover:border-[#F5EAD4]/70 text-[#F5EAD4] transition-all duration-300 shadow-xl cursor-pointer select-none group"
+      >
+        <!-- Muted Icon (shown by default) -->
+        <svg id="icon-muted" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+        <!-- Unmuted Icon (active sound) -->
+        <svg id="icon-unmuted" class="w-4 h-4 sm:w-5 sm:h-5 hidden transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <span id="sound-toggle-text" class="text-xs sm:text-sm font-medium tracking-wider uppercase font-sans">Unmute</span>
+      </button>
     </div>
   </section>
 
-  <main class="container">
-    <div class="lead-grid">
-      <article class="metric"><div class="num" data-count="412">0</div><div class="lbl">Structures Damaged</div></article>
-      <article class="metric"><div class="num" data-count="137">0</div><div class="lbl">Blocks Fully Cleared</div></article>
-      <article class="metric"><div class="num" data-count="6">0</div><div class="lbl">Months Tracked</div></article>
-    </div>
-
-    <section class="story-shell">
-      <aside class="sticky-panel">
-        <div class="mapbox">
-          <svg viewBox="0 0 500 350" width="100%" height="100%" aria-label="District map">
-            <rect id="d0" class="district" x="28" y="30" width="130" height="86" rx="8"></rect>
-            <rect id="d1" class="district" x="176" y="34" width="130" height="80" rx="8"></rect>
-            <rect id="d2" class="district" x="324" y="30" width="146" height="92" rx="8"></rect>
-            <rect id="d3" class="district" x="44" y="136" width="158" height="94" rx="8"></rect>
-            <rect id="d4" class="district" x="220" y="130" width="130" height="104" rx="8"></rect>
-            <rect id="d5" class="district" x="366" y="138" width="110" height="92" rx="8"></rect>
-            <rect id="d6" class="district" x="72" y="250" width="150" height="72" rx="8"></rect>
-            <rect id="d7" class="district" x="246" y="248" width="222" height="74" rx="8"></rect>
-          </svg>
+  <!-- ========================================================================= -->
+  <!-- FRAME 4: ACOUSTIC COLLECTIONS / SOUND BOARD (Figma Node #193:3211)        -->
+  <!-- ========================================================================= -->
+  <section
+    id="soundboard"
+    class="relative w-full z-40 bg-[#F5EAD4] flex justify-center py-16 md:py-24 px-6 md:px-12 lg:px-[120px]"
+  >
+    <div class="w-full max-w-[1200px] flex flex-col gap-10 md:gap-14">
+      <!-- Header Row (Figma Node #193:3261) -->
+      <div class="w-full flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-4">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-[10px] font-normal tracking-[0.03em] text-[#3A1F02]">
+              Acoustic collections
+            </span>
+            <h2 class="font-serif text-3xl md:text-[40px] font-semibold text-[#0D0F04] leading-[1.3] tracking-[0.01em]">
+              Explore the sound board
+            </h2>
+          </div>
+          <p class="font-sans text-base md:text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em] max-w-[635px]">
+            Each instrument is tuned to sacred harmonic ratios, hand-cast in high-tin Kansyam alloy for clarity, sustain, and ritual presence.
+          </p>
         </div>
-        <div class="map-caption" id="map-caption">Scroll to step through the timeline.</div>
-      </aside>
 
-      <div class="steps" id="steps">
-        <article class="step active" data-map="d2" data-caption="Phase 1: Damage concentrated in the northeast blocks.">
-          <span class="chip">Phase 1</span>
-          <h2>Initial Shock In The Northeast</h2>
-          <p>The first wave concentrated around high-density blocks near the corridor edge. Most nearby streets remained functional but heavily congested.</p>
-          <div class="mut">Key signal: sudden drop in service access within 48 hours.</div>
-        </article>
-
-        <article class="step" data-map="d4" data-caption="Phase 2: Expansion toward central districts.">
-          <span class="chip">Phase 2</span>
-          <h2>Pressure Moves Inward</h2>
-          <p>By month two, the central district became the primary hotspot. Satellite traces show contiguous structural damage rather than isolated impact points.</p>
-          <div class="mut">Key signal: contiguous damage area more than doubled.</div>
-        </article>
-
-        <article class="step" data-map="d5" data-caption="Phase 3: East-side blocks show repeated clearing cycles.">
-          <span class="chip">Phase 3</span>
-          <h2>Repeated Clearing Cycles</h2>
-          <p>Built-up zones in the east underwent repeated clearance. Residents reported multiple return-attempts followed by renewed displacement.</p>
-          <div class="mut">Key signal: repeated movement in and out of the same 2 km zone.</div>
-        </article>
-
-        <article class="step" data-map="d7" data-caption="Phase 4: Consolidated transformation in the southern belt.">
-          <span class="chip">Phase 4</span>
-          <h2>Southern Belt Consolidates</h2>
-          <p>In the final period, the southern belt shifted fastest. What had been mixed-use streets now appears as wide cleared strips intersecting residential pockets.</p>
-          <div class="mut">Key signal: block-level continuity in cleared pathways.</div>
-        </article>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center px-3 py-2 h-[48px] border border-[#3A1F02] text-[#3A1F02] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:bg-[#EBE3D6] active:bg-[#E2D8C8] active:scale-[0.98] transition-all whitespace-nowrap self-start md:self-end cursor-pointer"
+        >
+          Explore all collection
+        </button>
       </div>
-    </section>
 
-    <section class="timeline">
-      <h3>Timeline Scrubber</h3>
-      <p>Drag to inspect monthly intensity estimates and footprint change.</p>
-      <div class="row" style="justify-content:space-between; color: #e6d5b6;">
-        <strong id="monthLabel">Month 1</strong>
-        <span id="intensity">Intensity: 18%</span>
+      <!-- Main Products Grid (Figma Nodes #193:3252, #193:3214, #193:3233) -->
+      <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        
+        <!-- Left Column: Large Para Card (Figma Node #193:3252) -->
+        <article class="w-full flex flex-col gap-4">
+          <div class="w-full h-[420px] sm:h-[540px] lg:h-[748px] overflow-hidden bg-[#E8DCBF] rounded-none">
+            <img
+              src="./assets/para_large.png"
+              alt="Para - Auspicious harvest measuring vessel"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div class="flex flex-col justify-end gap-4">
+            <div class="flex flex-col gap-2">
+              <h3 class="font-sans font-medium text-[16px] text-[#2F1F18] leading-[1.6] tracking-[0.02em]">
+                Para
+              </h3>
+              <p class="font-sans font-normal text-[14px] text-[#2F1F18] leading-[1.5] tracking-[0.02em]">
+                Auspicious cylindrical harvest measuring vessel with reinforced brass hoops, decorative rivets, and forged dual ring handles.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer"
+            >
+              Explore Para
+            </button>
+          </div>
+        </article>
+
+        <!-- Right Column: 2x2 Grid (4 Cards of 288px width) -->
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Card 1: Nadarajah Vigraham (Figma Node #193:3215) -->
+          <article class="w-full flex flex-col gap-4">
+            <div class="w-full aspect-square max-h-[288px] overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/nadaraja_vigraham_1790406601793.jpg"
+                alt="Nadarajah Vigraham"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="flex flex-col justify-end gap-4">
+              <div class="flex flex-col gap-2 min-h-[72px]">
+                <h3 class="font-sans font-medium text-[16px] text-[#2F1F18] leading-[1.6] tracking-[0.02em]">
+                  Nadarajah Vigraham
+                </h3>
+                <p class="font-sans font-normal text-[14px] text-[#2F1F18] leading-[1.5] tracking-[0.02em]">
+                  Lost-wax cast bronze (Odu / 78% Cu, 22% Sn) portraying the Ananda Tandava
+                </p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer"
+              >
+                Explore Vigraham
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 2: Uruli (Figma Node #193:3224) -->
+          <article class="w-full flex flex-col gap-4">
+            <div class="w-full aspect-square max-h-[288px] overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/uruli_bronze_1790406620503.jpg"
+                alt="Uruli"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="flex flex-col justify-end gap-4">
+              <div class="flex flex-col gap-2 min-h-[72px]">
+                <h3 class="font-sans font-medium text-[16px] text-[#2F1F18] leading-[1.6] tracking-[0.02em]">
+                  Uruli
+                </h3>
+                <p class="font-sans font-normal text-[14px] text-[#2F1F18] leading-[1.5] tracking-[0.02em]">
+                  Resonant bell-metal vessel.<br class="hidden sm:inline" />For rituals or floating floral displays.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer"
+              >
+                Explore Uruli
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 3: Kindi (Figma Node #193:3234) -->
+          <article class="w-full flex flex-col gap-4">
+            <div class="w-full aspect-square max-h-[288px] overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/kindi_bronze_1790406645243.jpg"
+                alt="Kindi"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="flex flex-col justify-end gap-4">
+              <div class="flex flex-col gap-2 min-h-[72px]">
+                <h3 class="font-sans font-medium text-[16px] text-[#2F1F18] leading-[1.6] tracking-[0.02em]">
+                  Kindi
+                </h3>
+                <p class="font-sans font-normal text-[14px] text-[#2F1F18] leading-[1.5] tracking-[0.02em]">
+                  Elegant spouted vessel designed for touch-free water flow for ritual purity.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer"
+              >
+                Explore Kindi
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 4: Nilavilakku (Figma Node #193:3243) -->
+          <article class="w-full flex flex-col gap-4">
+            <div class="w-full aspect-square max-h-[288px] overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/nilavilakku.png"
+                alt="Nilavilakku"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="flex flex-col justify-end gap-4">
+              <div class="flex flex-col gap-2 min-h-[72px]">
+                <h3 class="font-sans font-medium text-[16px] text-[#2F1F18] leading-[1.6] tracking-[0.02em]">
+                  Nilavilakku
+                </h3>
+                <p class="font-sans font-normal text-[14px] text-[#2F1F18] leading-[1.5] tracking-[0.02em]">
+                  Classic multi-tiered oil lamp featuring a circular base and a 5-wick dish.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer"
+              >
+                Explore Vilakku
+              </button>
+            </div>
+          </article>
+
+        </div>
       </div>
-      <input class="range" id="timelineRange" type="range" min="0" max="5" value="0" />
-      <div class="bars" id="bars"></div>
-      <div class="monthline"><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span></div>
-    </section>
-
-    <section class="compare">
-      <h3>Before / After Swipe</h3>
-      <div class="slider-wrap">
-        <div class="scene-before"></div>
-        <div class="scene-after" id="afterLayer"></div>
-      </div>
-      <input id="compareRange" type="range" min="0" max="100" value="50" />
-      <div class="labels"><span>Before</span><span>After</span></div>
-    </section>
-
-    <div class="footer">
-      Method note: Demo dataset for interactive design prototype. Replace with verified reporting data, sourcing, and annotations for publication.
     </div>
-  </main>
+  </section>
 
+  <!-- ========================================================================= -->
+  <!-- FRAME 5: LIVING TRADITION RIBBON BANNER (Figma Node #193:3205)             -->
+  <!-- ========================================================================= -->
+  <section
+    id="tradition-banner"
+    class="relative w-full z-40 bg-[#F5EAD4] flex justify-center items-center py-6 md:py-12 overflow-hidden"
+  >
+    <div class="relative w-full max-w-[1440px] px-0 flex justify-center items-center">
+      <img
+        src="./assets/ribbon_banner.png"
+        alt="More than a craft, it is a living tradition shaped by hands, fire, and sound, carried forward through generations"
+        class="w-full h-auto object-contain select-none pointer-events-none"
+        loading="lazy"
+        draggable="false"
+      />
+      <!-- Semantic Accessible Micro-Copy -->
+      <blockquote class="sr-only">
+        &ldquo;More than a craft, it is a living tradition shaped by hands, fire, and sound, carried forward through generations&rdquo;
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 6: MEET THE MAKERS (Figma Node #193:3103)                           -->
+  <!-- ========================================================================= -->
+  <section
+    id="makers"
+    class="relative w-full z-40 bg-[#F5EAD4] flex flex-col items-center pt-16 md:pt-20 pb-16 md:pb-24 overflow-hidden"
+  >
+    <!-- Header Block (Figma Node #193:3118: 1200px width, items-end) -->
+    <div class="w-full max-w-[1200px] px-6 md:px-0 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-4 mb-10 md:mb-14 z-20">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-[10px] font-normal tracking-[0.03em] text-[#3A1F02]">
+            King of craft
+          </span>
+          <h2 class="font-serif text-3xl md:text-[40px] font-semibold text-[#0D0F04] leading-[1.3] tracking-[0.01em]">
+            Meet the makers
+          </h2>
+        </div>
+        <p class="font-sans text-base md:text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em] max-w-[635px]">
+          Behind every bell is a maker, a story, and generations of knowledge.<br class="hidden md:inline" />
+          Meet the artisans who continue to shape Mannar’s living metal tradition
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center justify-center px-3 py-2 h-[48px] border border-[#3A1F02] text-[#3A1F02] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:bg-[#EBE3D6] active:bg-[#E2D8C8] active:scale-[0.98] transition-all whitespace-nowrap self-start md:self-end cursor-pointer"
+      >
+        Explore all collection
+      </button>
+    </div>
+
+    <!-- Panoramic Artisan Gallery with Curved Lens Masks (Figma Nodes #193:3104-3117) -->
+    <div class="relative w-full max-w-[1440px] h-[480px] sm:h-[540px] md:h-[594px] overflow-hidden select-none">
+      
+      <!-- Continuous Horizontal Moving Strip of Portrait Cards -->
+      <div class="absolute top-[30px] sm:top-[60px] md:top-[98.6px] left-0 flex items-center h-[360px] sm:h-[380px] md:h-[400px]">
+        <div class="flex items-center animate-makers-marquee hover:[animation-play-state:paused]">
+          
+          <!-- Track Set 1 -->
+          <div class="flex items-center gap-4 pr-4 flex-shrink-0">
+            <!-- Card 1 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_1.png"
+                alt="Mannar bell metal artisan"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 2 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_2.png"
+                alt="Master artisan with forging hammer"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 3 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_3.png"
+                alt="Kansyam master craftsman"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 4 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_4.png"
+                alt="Artisan in workshop"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 5 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_5.png"
+                alt="Artisan casting bell metal"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 6 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_6.png"
+                alt="Mannar bell metal community"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <!-- Track Set 2 (Seamless loop identical duplicate) -->
+          <div class="flex items-center gap-4 pr-4 flex-shrink-0">
+            <!-- Card 1 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_1.png"
+                alt="Mannar bell metal artisan"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 2 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_2.png"
+                alt="Master artisan with forging hammer"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 3 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_3.png"
+                alt="Kansyam master craftsman"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 4 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_4.png"
+                alt="Artisan in workshop"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 5 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_5.png"
+                alt="Artisan casting bell metal"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Card 6 -->
+            <div class="w-[288px] h-[360px] sm:h-[380px] md:h-[400px] flex-shrink-0 overflow-hidden bg-[#E8DCBF]">
+              <img
+                src="./assets/artisan_6.png"
+                alt="Mannar bell metal community"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Top Curved Lens Mask SVG (Figma Node #193:3117) -->
+      <div class="absolute top-0 left-0 w-full h-[100px] sm:h-[120px] md:h-[139px] pointer-events-none z-10">
+        <img
+          src="./assets/makers_curve_top.svg"
+          alt=""
+          class="w-full h-full object-fill pointer-events-none select-none"
+          draggable="false"
+        />
+      </div>
+
+      <!-- Bottom Curved Lens Mask SVG (Figma Node #193:3116) -->
+      <div class="absolute bottom-0 left-0 w-full h-[100px] sm:h-[120px] md:h-[139px] pointer-events-none z-10">
+        <img
+          src="./assets/makers_curve_bottom.svg"
+          alt=""
+          class="w-full h-full object-fill pointer-events-none select-none"
+          draggable="false"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 7: RITUAL TABLEWARE & LIVING ARTIFACTS (Figma Node #193:3016)       -->
+  <!-- ========================================================================= -->
+  <section
+    id="ritual-tableware"
+    class="relative w-full z-40 bg-[#F5EAD4] flex justify-center items-center overflow-hidden"
+  >
+    <div class="relative w-full max-w-[1440px] aspect-[16/10] max-h-[900px] overflow-hidden select-none">
+      <img
+        src="./assets/tableware_editorial.png"
+        alt="Handcrafted Kerala bell metal tableware, ceremonial vessels, and jasmine floral arrangements"
+        class="w-full h-full object-cover select-none pointer-events-none"
+        loading="lazy"
+        draggable="false"
+      />
+
+      <!-- ===================================================================== -->
+      <!-- 4 FOCUS POINTS (HOTSPOTS) OVERLAY (Figma Node #227:57)                -->
+      <!-- ===================================================================== -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none">
+        
+        <!-- Hotspot 1: Thambalam (Figma #227:77, 15.4% left, 13.5% top) -->
+        <div class="hotspot-item group absolute pointer-events-auto" style="left: 15.4%; top: 13.5%;">
+          <!-- Focus Point Button -->
+          <button
+            type="button"
+            aria-label="View Thambalam details"
+            class="hotspot-btn absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full border border-[#F5EAD4] flex items-center justify-center bg-black/25 backdrop-blur-[2px] transition-transform duration-200 group-hover:scale-110 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.35)] focus:outline-none z-20"
+          >
+            <span class="w-[20px] h-[20px] rounded-full bg-[#F5EAD4] block shadow-sm"></span>
+            <span class="absolute inset-0 rounded-full border border-[#F5EAD4] animate-ping opacity-40 pointer-events-none"></span>
+          </button>
+
+          <!-- Hotspot Popover (Appears on Hover) -->
+          <div class="hotspot-popover absolute left-0 top-0 opacity-0 scale-95 origin-[0_0] pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 z-30">
+            <!-- Connecting Line SVG -->
+            <svg class="absolute overflow-visible pointer-events-auto" style="left: 0; top: 0; width: 1px; height: 1px;" fill="none">
+              <line x1="11.7" y1="-9.4" x2="52" y2="-42" stroke="transparent" stroke-width="24" />
+              <line x1="11.7" y1="-9.4" x2="52" y2="-42" stroke="#F5EAD4" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <!-- Tooltip Card (#227:61) -->
+            <div
+              class="absolute bg-[#F5EAD4] rounded-[16px] p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.25)] w-[280px] sm:w-[320px] md:w-[354px] flex flex-col gap-1 pointer-events-auto"
+              style="left: 52px; top: -80px;"
+            >
+              <h4 class="font-sans font-medium text-sm sm:text-base text-[#3A1F02] tracking-[0.02em]">Thambalam</h4>
+              <p class="font-sans font-normal text-xs sm:text-sm text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                Traditional round metal tray—usually made of brass or silver—used in South Indian households
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hotspot 2: Casserole (Figma #227:79, 26.05% left, 51.07% top) -->
+        <div class="hotspot-item group absolute pointer-events-auto" style="left: 26.05%; top: 51.07%;">
+          <!-- Focus Point Button -->
+          <button
+            type="button"
+            aria-label="View Casserole details"
+            class="hotspot-btn absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full border border-[#F5EAD4] flex items-center justify-center bg-black/25 backdrop-blur-[2px] transition-transform duration-200 group-hover:scale-110 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.35)] focus:outline-none z-20"
+          >
+            <span class="w-[20px] h-[20px] rounded-full bg-[#F5EAD4] block shadow-sm"></span>
+            <span class="absolute inset-0 rounded-full border border-[#F5EAD4] animate-ping opacity-40 pointer-events-none"></span>
+          </button>
+
+          <!-- Hotspot Popover (Appears on Hover) -->
+          <div class="hotspot-popover absolute left-0 top-0 opacity-0 scale-95 origin-[0_0] pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 z-30">
+            <!-- Connecting Line SVG -->
+            <svg class="absolute overflow-visible pointer-events-auto" style="left: 0; top: 0; width: 1px; height: 1px;" fill="none">
+              <line x1="12.3" y1="-8.6" x2="60" y2="-42" stroke="transparent" stroke-width="24" />
+              <line x1="12.3" y1="-8.6" x2="60" y2="-42" stroke="#F5EAD4" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <!-- Tooltip Card (#227:65) -->
+            <div
+              class="absolute bg-[#F5EAD4] rounded-[16px] p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.25)] w-[280px] sm:w-[320px] md:w-[354px] flex flex-col gap-1 pointer-events-auto"
+              style="left: 60px; top: -80px;"
+            >
+              <h4 class="font-sans font-medium text-sm sm:text-base text-[#3A1F02] tracking-[0.02em]">Casserole</h4>
+              <p class="font-sans font-normal text-xs sm:text-sm text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                A large, deep baking dish used in the oven and a category of comforting, baked one-dish meals
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hotspot 3: Bowl (Figma #227:81, 54.04% left, 28.5% top - positioned inside utensil per user feedback) -->
+        <div class="hotspot-item group absolute pointer-events-auto" style="left: 54.04%; top: 28.5%;">
+          <!-- Focus Point Button -->
+          <button
+            type="button"
+            aria-label="View Bowl details"
+            class="hotspot-btn absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full border border-[#F5EAD4] flex items-center justify-center bg-black/25 backdrop-blur-[2px] transition-transform duration-200 group-hover:scale-110 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.35)] focus:outline-none z-20"
+          >
+            <span class="w-[20px] h-[20px] rounded-full bg-[#F5EAD4] block shadow-sm"></span>
+            <span class="absolute inset-0 rounded-full border border-[#F5EAD4] animate-ping opacity-40 pointer-events-none"></span>
+          </button>
+
+          <!-- Hotspot Popover (Appears on Hover) -->
+          <div class="hotspot-popover absolute left-0 top-0 opacity-0 scale-95 origin-[0_0] pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 z-30">
+            <!-- Connecting Line SVG -->
+            <svg class="absolute overflow-visible pointer-events-auto" style="left: 0; top: 0; width: 1px; height: 1px;" fill="none">
+              <line x1="11.4" y1="-9.8" x2="64" y2="-55" stroke="transparent" stroke-width="24" />
+              <line x1="11.4" y1="-9.8" x2="64" y2="-55" stroke="#F5EAD4" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <!-- Tooltip Card (#227:69) -->
+            <div
+              class="absolute bg-[#F5EAD4] rounded-[16px] p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.25)] w-[280px] sm:w-[320px] md:w-[354px] flex flex-col gap-1 pointer-events-auto"
+              style="left: 64px; top: -95px;"
+            >
+              <h4 class="font-sans font-medium text-sm sm:text-base text-[#3A1F02] tracking-[0.02em]">Bowl</h4>
+              <p class="font-sans font-normal text-xs sm:text-sm text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                A round, open-topped dish or container primarily used for preparing, serving, storing, or eating food
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hotspot 4: Plate (Figma #227:83, 67.58% left, 74.62% top) -->
+        <div class="hotspot-item group absolute pointer-events-auto" style="left: 67.58%; top: 74.62%;">
+          <!-- Focus Point Button -->
+          <button
+            type="button"
+            aria-label="View Plate details"
+            class="hotspot-btn absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] rounded-full border border-[#F5EAD4] flex items-center justify-center bg-black/25 backdrop-blur-[2px] transition-transform duration-200 group-hover:scale-110 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.35)] focus:outline-none z-20"
+          >
+            <span class="w-[20px] h-[20px] rounded-full bg-[#F5EAD4] block shadow-sm"></span>
+            <span class="absolute inset-0 rounded-full border border-[#F5EAD4] animate-ping opacity-40 pointer-events-none"></span>
+          </button>
+
+          <!-- Hotspot Popover (Appears on Hover, positioned to the left of the dot) -->
+          <div class="hotspot-popover absolute left-0 top-0 opacity-0 scale-95 origin-[0_0] pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 z-30">
+            <!-- Connecting Line SVG -->
+            <svg class="absolute overflow-visible pointer-events-auto" style="left: 0; top: 0; width: 1px; height: 1px;" fill="none">
+              <line x1="-13.4" y1="-6.7" x2="-56" y2="-28" stroke="transparent" stroke-width="24" />
+              <line x1="-13.4" y1="-6.7" x2="-56" y2="-28" stroke="#F5EAD4" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <!-- Tooltip Card (#227:73) -->
+            <div
+              class="absolute bg-[#F5EAD4] rounded-[16px] p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.25)] w-[280px] sm:w-[320px] md:w-[354px] flex flex-col gap-1 pointer-events-auto"
+              style="right: 56px; top: -65px;"
+            >
+              <h4 class="font-sans font-medium text-sm sm:text-base text-[#3A1F02] tracking-[0.02em]">Plate</h4>
+              <p class="font-sans font-normal text-xs sm:text-sm text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                A broad, flat or slightly raised vessel used for serving and eating food
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 8: WORKSHOPS & MASTERCLASSES (Figma Node #193:3126)                 -->
+  <!-- ========================================================================= -->
+  <section
+    id="workshops"
+    class="relative w-full z-40 bg-[#F4EEE2] flex flex-col items-center py-16 md:py-24 overflow-hidden"
+  >
+    <!-- Header Block (Figma Node #193:3128: 1200px width, items-end) -->
+    <div class="w-full max-w-[1200px] px-6 md:px-0 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-4 mb-10 md:mb-14">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-[10px] font-normal tracking-[0.03em] text-[#3A1F02]">
+            Workshop and masterclass
+          </span>
+          <h2 class="font-serif text-3xl md:text-[40px] font-semibold text-[#0D0F04] leading-[1.3] tracking-[0.01em]">
+            Step into the forge
+          </h2>
+        </div>
+        <p class="font-sans text-base md:text-[18px] text-[#3A1F02] leading-[1.5] tracking-[0.01em] max-w-[635px]">
+          Journey to our riverfront campus in Mannar. Stay in artisan guest cottages, sculpt tactile wax models, and hand-tune your own bell alongside master craftsmen.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center justify-center px-3 py-2 h-[48px] border border-[#3A1F02] text-[#3A1F02] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:bg-[#EBE3D6] active:bg-[#E2D8C8] active:scale-[0.98] transition-all whitespace-nowrap self-start md:self-end cursor-pointer"
+      >
+        Explore all Workshops
+      </button>
+    </div>
+
+    <!-- Horizontally Scrollable Cards Container (Figma Nodes #193:3136-3200) -->
+    <div
+      id="workshop-scroll-container"
+      class="w-full overflow-x-auto no-scrollbar scroll-smooth px-6 md:px-[calc(max(24px,(100vw-1200px)/2))] py-4 flex cursor-grab active:cursor-grabbing"
+    >
+      <div class="flex items-stretch gap-4 min-w-max">
+        
+        <!-- Card 1: 3 Day Package (Figma Node #193:3137) -->
+        <article class="w-[88vw] max-w-[940px] lg:w-[940px] flex-shrink-0 border border-[#B48E41] rounded-[32px] p-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] bg-[#F4EEE2] flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-10">
+          <!-- Card Image Container (Figma: 507x568, rounded-16) -->
+          <div class="w-full md:w-[507px] h-[340px] sm:h-[420px] md:h-[568px] rounded-[16px] overflow-hidden flex-shrink-0 bg-[#E8DCBF]">
+            <img
+              src="./assets/workshop_culture.png"
+              alt="Craft, culture & heritage - Ritual pouring and community immersion"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Card Content (Figma: width 361px, gap 66px) -->
+          <div class="w-full md:w-[361px] flex flex-col justify-between py-2 md:py-4 gap-6">
+            <!-- Header & Subtitle -->
+            <div class="flex flex-col gap-3">
+              <span class="inline-flex items-center px-3 py-1 h-[24px] bg-white text-[#3A1F02] text-[10px] font-normal tracking-[0.03em] rounded-full self-start">
+                3 day package
+              </span>
+              <h3 class="font-sans font-semibold text-[20px] text-[#3A1F02] leading-[1.5] tracking-[0.01em]">
+                Craft, culture & heritage
+              </h3>
+              <p class="font-sans text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                Step deeper into Mannar’s living traditions through hands-on craft, local stories, and cultural experiences that connect you with the community
+              </p>
+            </div>
+
+            <!-- 3 Features List (Figma Nodes #193:3148-3166) -->
+            <div class="flex flex-col gap-4">
+              <!-- Feature 1 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_workshop.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Learn the craft
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Join a guided bell-metal workshop and explore traditional making techniques.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Feature 2 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_trail.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Cultural trail
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Discover Aranmula’s boat traditions and art forms with a Kerala Tourism
+                  </p>
+                </div>
+              </div>
+
+              <!-- Feature 3 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_souvenir.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Take a piece at home
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Bring back a handcrafted souvenir as a lasting memory of the experience.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button
+              type="button"
+              class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer mt-2"
+            >
+              Join The Experience
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 2: 1 Day Package (Figma Node #193:3169) -->
+        <article class="w-[88vw] max-w-[940px] lg:w-[940px] flex-shrink-0 border border-[#B48E41] rounded-[32px] p-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] bg-[#F4EEE2] flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-10">
+          <!-- Card Image Container (Figma: 507x568, rounded-16) -->
+          <div class="w-full md:w-[507px] h-[340px] sm:h-[420px] md:h-[568px] rounded-[16px] overflow-hidden flex-shrink-0 bg-[#E8DCBF]">
+            <img
+              src="./assets/workshop_furnace.png"
+              alt="From fire to form - Molten crucibles in the high-heat bell metal furnace"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Card Content (Figma: width 361px, gap 66px) -->
+          <div class="w-full md:w-[361px] flex flex-col justify-between py-2 md:py-4 gap-6">
+            <!-- Header & Subtitle -->
+            <div class="flex flex-col gap-3">
+              <span class="inline-flex items-center px-3 py-1 h-[24px] bg-white text-[#3A1F02] text-[10px] font-normal tracking-[0.03em] rounded-full self-start">
+                1 day package
+              </span>
+              <h3 class="font-sans font-semibold text-[20px] text-[#3A1F02] leading-[1.5] tracking-[0.01em]">
+                From fire to form
+              </h3>
+              <p class="font-sans text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                Experience a vibrant tradition as artisans shape molten bell metal into stunning creations, a craft cherished through generations.
+              </p>
+            </div>
+
+            <!-- 3 Features List (Figma Nodes #193:3180-3198) -->
+            <div class="flex flex-col gap-4">
+              <!-- Feature 1 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_workshop.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Make your own
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Observe the melting, moulding and casting of bell metal up close.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Feature 2 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_trail.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Witness the process
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Observe the melting, moulding and casting of bell metal up close.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Feature 3 -->
+              <div class="flex items-start gap-3">
+                <img src="./assets/icon_souvenir.svg" alt="" class="w-8 h-8 flex-shrink-0" />
+                <div class="flex flex-col gap-1">
+                  <h4 class="font-sans font-medium text-[16px] text-[#3A1F02] leading-[1.6] tracking-[0.02em]">
+                    Take a piece at home
+                  </h4>
+                  <p class="font-sans text-[14px] text-[#3A1F02] leading-[1.5] tracking-[0.02em]">
+                    Bring back a handcrafted souvenir as a lasting memory of the experience.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button
+              type="button"
+              class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all self-start cursor-pointer mt-2"
+            >
+              Join The Experience
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- Pagination Dots (Figma Node #193:3201) -->
+    <div class="flex items-center justify-center gap-2 mt-8">
+      <button
+        type="button"
+        onclick="scrollToWorkshopCard(0)"
+        id="workshop-dot-0"
+        class="w-3 h-3 rounded-full bg-[#B48E41] border border-[#B48E41] cursor-pointer transition-all"
+        aria-label="View 3-day package"
+      ></button>
+      <button
+        type="button"
+        onclick="scrollToWorkshopCard(1)"
+        id="workshop-dot-1"
+        class="w-3 h-3 rounded-full border border-[#B48E41] opacity-60 hover:opacity-100 cursor-pointer transition-all"
+        aria-label="View 1-day package"
+      ></button>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 9: LIVING CRAFT RIBBON BANNER (Figma Node #193:3269)                -->
+  <!-- ========================================================================= -->
+  <section
+    id="knowledge-banner"
+    class="relative w-full z-40 bg-[#F4EEE2] flex justify-center items-center py-6 md:py-12 overflow-hidden"
+  >
+    <div class="relative w-full max-w-[1440px] px-0 flex justify-center items-center select-none">
+      <img
+        src="./assets/ribbon_banner_2.png"
+        alt="From inherited knowledge to living craft"
+        class="w-full h-auto object-contain select-none pointer-events-none"
+        loading="lazy"
+        draggable="false"
+      />
+      <!-- Semantic Accessible Micro-Copy -->
+      <blockquote class="sr-only">
+        &ldquo;From inherited knowledge to living craft&rdquo;
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FRAME 10: THE COMMUNITY (Figma Node #193:3061)                            -->
+  <!-- ========================================================================= -->
+  <section
+    id="community"
+    class="relative w-full z-40 bg-[#F4EEE2] flex justify-center items-center py-16 md:py-24 px-6 md:px-12 lg:px-[120px] overflow-hidden"
+  >
+    <div class="w-full max-w-[1200px] flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-8">
+      
+      <!-- Left Column: Story & Actions (Figma: width 456px, height 591px) -->
+      <div class="w-full lg:w-[456px] min-h-0 lg:min-h-[591px] flex flex-col justify-between gap-8">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-[10px] font-normal tracking-[0.03em] text-[#3A1F02]">
+              Lineage and continuity
+            </span>
+            <h2 class="font-serif text-3xl md:text-[40px] font-semibold text-[#0D0F04] leading-[1.3] tracking-[0.01em]">
+              The community
+            </h2>
+          </div>
+          
+          <div class="font-sans text-base md:text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em] space-y-5">
+            <p>
+              The bell-metal tradition of Mannar lives through the families and artisans who have carried its knowledge across generations. Their work is shaped not only by inherited techniques, but by a deep understanding of metal, fire, sound, and the place they call home.
+            </p>
+            <p>
+              For these makers, craft is more than an occupation. It is a source of livelihood, identity, and community &mdash; connecting generations through shared skills, workshops, stories, and everyday practices
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons (Figma Node #193:3072) -->
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center h-[40px] px-3 py-2 bg-[#3A1F02] text-[#F5EAD4] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            Join Community
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center h-[40px] px-3 py-2 border border-[#3A1F02] text-[#3A1F02] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:bg-[#EBE3D6] active:bg-[#E2D8C8] active:scale-[0.98] transition-all cursor-pointer"
+          >
+            Learn more
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Visual Mosaic (Figma Node #193:3077: 592x591) -->
+      <div class="w-full max-w-[592px] aspect-square rounded-[16px] overflow-hidden flex-shrink-0">
+        <img
+          src="./assets/community_mosaic.png"
+          alt="Mannar bell metal community, sacred temple bell, Aranmula boat race, forging sparks, and Valkannadi metal mirror"
+          class="w-full h-full object-contain select-none pointer-events-none"
+          loading="lazy"
+          draggable="false"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- SECTION 11: MASTER CRAFTSMAN QUOTE (Figma Node #193:3090)                 -->
+  <!-- ========================================================================= -->
+  <section id="craftsman-quote" class="relative w-full z-40 bg-[#F4EEE2] py-20 px-6 sm:px-8 md:px-12 flex justify-center items-center">
+    <div class="w-full max-w-[965px] flex flex-col items-center text-center">
+      
+      <!-- Quotation Mark (Fraunces SemiBold Italic #B48E41) -->
+      <span class="block font-serif italic font-semibold text-[#B48E41] text-[100px] md:text-[132px] leading-none select-none -mb-4 md:-mb-6">
+        “
+      </span>
+
+      <!-- Quote Content Frame (Figma #193:3094) -->
+      <div class="w-full flex flex-col items-center gap-6">
+        <!-- Quote Text (#193:3095: Fraunces SemiBold Italic 40px #0D0F04) -->
+        <blockquote class="font-serif italic font-semibold text-[#0D0F04] text-2xl sm:text-3xl md:text-[40px] leading-[1.3] tracking-[0.01em] text-center max-w-[965px]">
+          "A bell is not stamped into shape; it is born from<br class="hidden md:inline" /> river mud, wax, and molten alloy. We listen until the<br class="hidden md:inline" /> bronze finally breathes."
+        </blockquote>
+
+        <!-- Attribution (#193:3096: Inter Regular / Medium 18px #0D0F04) -->
+        <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-base md:text-[18px] text-[#0D0F04] font-sans leading-[1.5] tracking-[0.01em]">
+          <span>-Master : <span class="font-medium">K.Achari</span></span>
+          <span class="ml-1">6th generation bell craft master</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- SECTION 12: STAY CONNECTED / NEWSLETTER (Figma Node #193:3020)            -->
+  <!-- ========================================================================= -->
+  <section id="stay-connected" class="relative w-full z-40 bg-[#F5EAD4] py-20 md:py-24 px-6 md:px-12 lg:px-[120px] flex justify-center items-center">
+    <div class="w-full max-w-[1200px] flex flex-col items-start">
+      <div class="w-full max-w-[456px] flex flex-col gap-12 md:gap-[80px]">
+        
+        <!-- Header Content (Figma Frame #193:3023) -->
+        <div class="w-full flex flex-col gap-4">
+          <!-- Eyebrow & Main Heading (#193:3024) -->
+          <div class="flex flex-col gap-1">
+            <span class="font-sans text-[10px] text-[#3A1F02] tracking-[0.03em]">
+              Stay connected
+            </span>
+            <h2 class="font-serif font-semibold text-[#0D0F04] text-3xl md:text-[40px] leading-[1.3] tracking-[0.01em]">
+              Let’s stay in touch
+            </h2>
+          </div>
+
+          <!-- Subtitle / Body Copy (#193:3027) -->
+          <p class="font-sans text-base md:text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em]">
+            Receive acoustic field recordings, quarterly foundry journals, and invitations to seasonal molten pourings
+          </p>
+        </div>
+
+        <!-- Form Row (Figma Frame #193:3028) -->
+        <form
+          onsubmit="event.preventDefault(); alert('Thank you for staying connected with Mannar artisans.');"
+          class="w-full flex items-center justify-between gap-4"
+        >
+          <!-- Input Field with Underline Border (#193:3029) -->
+          <div class="flex-1 max-w-[351px] h-[40px] border-b border-[#3A1F02] flex items-center px-3 py-2 bg-transparent transition-colors focus-within:border-[#B48E41]">
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your E-Mail"
+              aria-label="Enter your E-Mail"
+              class="w-full bg-transparent text-base text-[#0D0F04] placeholder-[#83817C] font-sans focus:outline-none tracking-[0.02em]"
+              required
+            />
+          </div>
+
+          <!-- Sign Up Button (#193:3032) -->
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center h-[40px] px-3 py-2 border border-[#3A1F02] text-[#3A1F02] font-medium text-base rounded-[8px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.25)] hover:bg-[#EBE3D6] active:bg-[#E2D8C8] active:scale-[0.98] transition-all cursor-pointer flex-shrink-0"
+          >
+            Sign up
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- SECTION 13: FOOTER (Figma Node #193:3034)                                 -->
+  <!-- ========================================================================= -->
+  <footer id="footer" class="relative w-full z-40 bg-[#F5EAD4] border-t border-[#B48E41] flex flex-col justify-center items-center">
+    
+    <!-- Main Footer Content (120px margin from border, max-w-[1200px]) -->
+    <div class="w-full px-6 md:px-12 lg:px-[120px] flex justify-center">
+      <div class="w-full max-w-[1200px] pt-16 md:pt-20 pb-12 md:pb-16 flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-8">
+        
+        <!-- Brand & Mission Statement (#193:3036: 456px) -->
+        <div class="w-full lg:w-[456px] flex flex-col gap-4">
+          <h3 class="font-serif font-semibold text-[#A3803A] text-3xl md:text-[40px] leading-[1.3] tracking-[0.01em]">
+            Aala.
+          </h3>
+          <p class="font-sans text-base md:text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em]">
+            Preserving Kerala's sacred bell metal craft through architectural sound, lost-wax metallurgy, and slow living.
+          </p>
+        </div>
+
+        <!-- Navigation Columns (#193:3040) -->
+        <div class="flex flex-wrap sm:flex-row gap-10 sm:gap-14 md:gap-16 lg:gap-20 pt-1">
+          
+          <!-- Column 1: Explore (#193:3041) -->
+          <div class="min-w-[129px] flex flex-col gap-3">
+            <span class="font-sans font-medium text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em]">
+              Explore
+            </span>
+            <ul class="flex flex-col gap-1 text-[14px] text-[#2F1F18] font-sans leading-[1.5] tracking-[0.02em]">
+              <li><a href="#heritage-showcase" class="hover:text-[#B48E41] transition-colors">Mannar heritage</a></li>
+              <li><a href="#soundboard" class="hover:text-[#B48E41] transition-colors">Bell metal craft</a></li>
+              <li><a href="#community" class="hover:text-[#B48E41] transition-colors">Kerala tourism</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2: Experience (#193:3047) -->
+          <div class="min-w-[129px] flex flex-col gap-3">
+            <span class="font-sans font-medium text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em]">
+              Experience
+            </span>
+            <ul class="flex flex-col gap-1 text-[14px] text-[#2F1F18] font-sans leading-[1.5] tracking-[0.02em]">
+              <li><a href="#workshops" class="hover:text-[#B48E41] transition-colors">1-day package</a></li>
+              <li><a href="#workshops" class="hover:text-[#B48E41] transition-colors">3-day package</a></li>
+              <li><a href="#workshops" class="hover:text-[#B48E41] transition-colors">4-day package</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3: Community (#193:3053) -->
+          <div class="min-w-[129px] flex flex-col gap-3">
+            <span class="font-sans font-medium text-[18px] text-[#2F1F18] leading-[1.5] tracking-[0.01em]">
+              Community
+            </span>
+            <ul class="flex flex-col gap-1 text-[14px] text-[#2F1F18] font-sans leading-[1.5] tracking-[0.02em]">
+              <li><a href="#makers" class="hover:text-[#B48E41] transition-colors">Achari family</a></li>
+              <li><a href="#makers" class="hover:text-[#B48E41] transition-colors">The artisan</a></li>
+              <li><a href="#community" class="hover:text-[#B48E41] transition-colors">Craft &amp; livelyhood</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Full-width Divider Line (Figma Node #193:3060: stroke #B48E41) -->
+    <div class="w-full border-t border-[#B48E41]"></div>
+
+    <!-- Sub-Footer Baseline Statement (#193:3059) -->
+    <div class="w-full px-6 md:px-12 lg:px-[120px] flex justify-center">
+      <div class="w-full max-w-[1200px] py-4 flex justify-start items-center">
+        <p class="font-sans text-[12px] text-[#2F1F18] tracking-[0.03em] leading-[1.5]">
+          Preserving sacred metallurgy through architectural sound
+        </p>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: WEB AUDIO KANSYAM SYNTHESIS & 60FPS PAGE TRANSITIONS          -->
+  <!-- ========================================================================= -->
   <script>
-    const progress = document.getElementById('progress');
-    const steps = [...document.querySelectorAll('.step')];
-    const caption = document.getElementById('map-caption');
-    const districts = [...document.querySelectorAll('.district')];
-    const counters = [...document.querySelectorAll('[data-count]')];
-    const range = document.getElementById('timelineRange');
-    const monthLabel = document.getElementById('monthLabel');
-    const intensity = document.getElementById('intensity');
-    const barsWrap = document.getElementById('bars');
-    const compare = document.getElementById('compareRange');
-    const afterLayer = document.getElementById('afterLayer');
+    // --- 1. Authentic Kansyam Bronze Recorded Audio Engine ---
+    class KansyamEngine {
+      constructor() {
+        this.src = './src/audio/WhatsApp%20Audio%202026-09-27%20at%2010.46.45%20AM.mp4';
+        this.fallbackSrc = './assets/bell_sound.mp4';
+        this.audioPool = [];
+        this.poolSize = 4;
+        this.poolIndex = 0;
+        this.initPool();
+      }
 
-    const monthly = [18, 29, 41, 57, 63, 74];
-    const bars = monthly.map((v) => {
-      const b = document.createElement('div');
-      b.className = 'bar';
-      b.style.height = '8px';
-      barsWrap.appendChild(b);
-      return b;
+      initPool() {
+        for (let i = 0; i < this.poolSize; i++) {
+          const audio = new Audio();
+          audio.preload = 'auto';
+          const src1 = document.createElement('source');
+          src1.src = this.src;
+          src1.type = 'audio/mp4';
+          const src2 = document.createElement('source');
+          src2.src = this.fallbackSrc;
+          src2.type = 'audio/mp4';
+          audio.appendChild(src1);
+          audio.appendChild(src2);
+          this.audioPool.push(audio);
+        }
+      }
+
+      strike() {
+        try {
+          const audio = this.audioPool[this.poolIndex];
+          this.poolIndex = (this.poolIndex + 1) % this.poolSize;
+          audio.currentTime = 0;
+          const promise = audio.play();
+          if (promise !== undefined) {
+            promise.catch(err => {
+              console.warn('Audio play caught:', err);
+              const fallback = new Audio(this.src);
+              fallback.play().catch(e => {
+                const f2 = new Audio(this.fallbackSrc);
+                f2.play().catch(() => {});
+              });
+            });
+          }
+        } catch (err) {
+          console.warn('Strike error:', err);
+        }
+      }
+    }
+
+    const bellSound = new KansyamEngine();
+    window.bellSound = bellSound;
+    window.engine = bellSound;
+
+    // --- 2. Interactive DOM References ---
+    const viewportBody = document.getElementById('viewport-body');
+    const backdropContainer = document.getElementById('backdrop-container');
+    const backdropImg = document.getElementById('backdrop-img');
+    const bellAnchor = document.getElementById('bell-anchor');
+    const bellTrigger = document.getElementById('bell-trigger');
+    const secondaryBell = document.getElementById('secondary-bell');
+    const rippleContainer = document.getElementById('ripple-container');
+    const page1 = document.getElementById('page-1');
+    const page2 = document.getElementById('page-2');
+    const scrollToggle = document.getElementById('scroll-toggle');
+    const scrollPromptText = document.getElementById('scroll-prompt-text');
+    const btnExperience = document.getElementById('btn-experience');
+
+    let currentPage = 1;
+
+    // --- 3. Tap/Click Strike Handler ---
+    function handleStrike(e) {
+      if (e) e.stopPropagation();
+
+      // Trigger Web Audio synthesis
+      try {
+        bellSound.strike();
+      } catch (err) {
+        console.warn('Audio error:', err);
+      }
+
+      // Trigger Physical Sway Animation
+      bellTrigger.classList.remove('animate-bell-sway');
+      void bellTrigger.offsetWidth; // force reflow
+      bellTrigger.classList.add('animate-bell-sway');
+
+      // Trigger Concentric Soft Water Ripples
+      rippleContainer.innerHTML = '';
+      [180, 420, 680].forEach(delay => {
+        const ring = document.createElement('span');
+        ring.className = 'water-ripple-ring';
+        ring.style.animationDelay = delay + 'ms';
+        ring.addEventListener('animationend', () => ring.remove());
+        rippleContainer.appendChild(ring);
+      });
+    }
+
+    bellTrigger.addEventListener('click', handleStrike);
+    bellTrigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleStrike();
+      }
     });
 
-    function animateCounters() {
-      counters.forEach((el) => {
-        const target = Number(el.dataset.count || 0);
-        let n = 0;
-        const step = Math.max(1, Math.round(target / 60));
-        const tick = () => {
-          n += step;
-          if (n >= target) n = target;
-          el.textContent = n.toLocaleString();
-          if (n < target) requestAnimationFrame(tick);
-        };
-        tick();
-      });
-    }
-
-    function setStep(activeStep) {
-      const activeMap = activeStep.dataset.map;
-      const activeCaption = activeStep.dataset.caption;
-      steps.forEach((step) => step.classList.toggle('active', step === activeStep));
-      districts.forEach((d) => d.classList.toggle('active', d.id === activeMap));
-      caption.textContent = activeCaption;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setStep(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    steps.forEach((step) => observer.observe(step));
-    setStep(steps[0]);
-
-    function renderTimeline(index) {
-      monthLabel.textContent = `Month ${index + 1}`;
-      intensity.textContent = `Intensity: ${monthly[index]}%`;
-      bars.forEach((bar, i) => {
-        const h = i <= index ? Math.max(12, monthly[i] * 1.6) : 8;
-        bar.style.height = `${h}px`;
-        bar.style.opacity = i <= index ? '1' : '.35';
-      });
-    }
-
-    range.addEventListener('input', () => renderTimeline(Number(range.value)));
-    renderTimeline(0);
-
-    compare.addEventListener('input', () => {
-      afterLayer.style.width = `${compare.value}%`;
+    bellTrigger.addEventListener('animationend', (e) => {
+      if (e.animationName === 'bellSway') {
+        bellTrigger.classList.remove('animate-bell-sway');
+      }
     });
 
-    let counterStarted = false;
-    const countObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !counterStarted) {
-          counterStarted = true;
-          animateCounters();
-        }
-      });
-    }, { threshold: 0.4 });
-    countObserver.observe(document.querySelector('.lead-grid'));
+    // --- 4. Page 1 <-> Page 2 Smooth Scroll / Transform Transition ---
+    function setPage(target) {
+      currentPage = target;
 
-    document.addEventListener('scroll', () => {
-      const h = document.documentElement;
-      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-      progress.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+      if (currentPage === 1) {
+        // Return to Page 1 (Figma Frame 2, Node #79:760)
+        viewportBody.style.backgroundColor = '#F4EEE2';
+        backdropContainer.style.top = '262px';
+        backdropImg.style.opacity = '0.25';
+
+        // Primary Bell in Page 1
+        bellAnchor.style.left = '67.59px';
+        bellAnchor.style.top = '-480.9px';
+        bellAnchor.style.width = '545.16px';
+        bellAnchor.style.height = '1272.76px';
+
+        // Secondary Bell hides
+        secondaryBell.classList.remove('opacity-80', 'scale-100');
+        secondaryBell.classList.add('opacity-0', 'scale-90');
+
+        // Page 1 reveals
+        page1.classList.remove('opacity-0', '-translate-y-8', 'pointer-events-none');
+        page1.classList.add('opacity-100', 'translate-y-0');
+
+        // Page 2 hides
+        page2.classList.remove('opacity-100', 'translate-y-0');
+        page2.classList.add('opacity-0', 'translate-y-12', 'pointer-events-none');
+
+        scrollPromptText.textContent = 'Keep listening ↓';
+      } else {
+        // Transition to Page 2 (Figma Frame 4, Node #85:5308)
+        viewportBody.style.backgroundColor = '#F9F3E5';
+        backdropContainer.style.top = '129px';
+        backdropImg.style.opacity = '0.15';
+
+        // Primary Bell scales down & shifts to anchor in Page 2 (#85:5312)
+        bellAnchor.style.left = '172.49px';
+        bellAnchor.style.top = '-99.26px';
+        bellAnchor.style.width = '339.1px';
+        bellAnchor.style.height = '791.69px';
+
+        // Secondary Bell fades in (#136:980)
+        secondaryBell.classList.remove('opacity-0', 'scale-90');
+        secondaryBell.classList.add('opacity-80', 'scale-100');
+
+        // Page 1 hides
+        page1.classList.remove('opacity-100', 'translate-y-0');
+        page1.classList.add('opacity-0', '-translate-y-8', 'pointer-events-none');
+
+        // Page 2 reveals
+        page2.classList.remove('opacity-0', 'translate-y-12', 'pointer-events-none');
+        page2.classList.add('opacity-100', 'translate-y-0');
+
+        scrollPromptText.textContent = 'Return to strike ↑';
+      }
+    }
+
+    // --- 5. Scroll Position Sync & Step-Through Controller ---
+    function onScrollSync() {
+      const y = window.scrollY;
+      const vh = window.innerHeight;
+
+      // Switch between Page 1 and Page 2 based on scroll progress
+      if (y < vh * 0.5) {
+        if (currentPage !== 1) setPage(1);
+      } else {
+        if (currentPage !== 2) setPage(2);
+      }
+    }
+    window.addEventListener('scroll', onScrollSync, { passive: true });
+    // Run on initial load
+    onScrollSync();
+
+    // Toggle button: clicks smooth-scroll between Frame 1 and Frame 2
+    scrollToggle.addEventListener('click', () => {
+      const vh = window.innerHeight;
+      if (currentPage === 1) {
+        window.scrollTo({ top: vh, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    if (btnExperience) {
+      btnExperience.addEventListener('click', () => {
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+      });
+    }
+
+    // Step-by-Step Wheel Paging between Frame 1, Frame 2, and Frame 3
+    let isTransitioning = false;
+    window.addEventListener('wheel', (e) => {
+      if (isTransitioning) return;
+      const y = window.scrollY;
+      const vh = window.innerHeight;
+
+      // Frame 1 -> Frame 2 (scrolling down from Frame 1)
+      if (y < 40 && e.deltaY > 30) {
+        isTransitioning = true;
+        window.scrollTo({ top: vh, behavior: 'smooth' });
+        setTimeout(() => { isTransitioning = false; }, 750);
+      }
+      // Frame 2 -> Frame 1 (scrolling up from Frame 2)
+      else if (Math.abs(y - vh) < 60 && e.deltaY < -30) {
+        isTransitioning = true;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { isTransitioning = false; }, 750);
+      }
+      // Frame 2 -> Frame 3 (scrolling down from Frame 2)
+      else if (Math.abs(y - vh) < 60 && e.deltaY > 30) {
+        const el = document.getElementById('heritage-showcase');
+        if (el) {
+          isTransitioning = true;
+          el.scrollIntoView({ behavior: 'smooth' });
+          setTimeout(() => { isTransitioning = false; }, 750);
+        }
+      }
+      // Frame 3 -> Frame 2 (scrolling up from top of Frame 3)
+      else if (y >= vh * 1.8 && y <= vh * 2.2 && e.deltaY < -30) {
+        isTransitioning = true;
+        window.scrollTo({ top: vh, behavior: 'smooth' });
+        setTimeout(() => { isTransitioning = false; }, 750);
+      }
     }, { passive: true });
+
+    // Touch Swipe Navigation for Mobile
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffY = touchStartY - touchEndY;
+      const vh = window.innerHeight;
+      const y = window.scrollY;
+
+      if (Math.abs(diffY) > 50) {
+        if (diffY > 0 && y < 40) {
+          // Swipe up from Frame 1 -> Frame 2
+          window.scrollTo({ top: vh, behavior: 'smooth' });
+        } else if (diffY < 0 && Math.abs(y - vh) < 80) {
+          // Swipe down from Frame 2 -> Frame 1
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (diffY > 0 && Math.abs(y - vh) < 80) {
+          // Swipe up from Frame 2 -> Frame 3
+          const el = document.getElementById('heritage-showcase');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }, { passive: true });
+
+    // Initial URL Parameter / Hash check
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('page') === '2' || window.location.hash === '#page2') {
+      window.scrollTo(0, window.innerHeight);
+    }
+    if (urlParams.get('scroll') === 'heritage' || window.location.hash === '#heritage-showcase') {
+      const el = document.getElementById('heritage-showcase');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- Workshops Carousel Interactive Navigation & Drag ---
+    function scrollToWorkshopCard(index) {
+      const container = document.getElementById('workshop-scroll-container');
+      if (!container) return;
+      const cards = container.querySelectorAll('article');
+      if (cards && cards[index]) {
+        cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    const wsContainer = document.getElementById('workshop-scroll-container');
+    if (wsContainer) {
+      let isDown = false;
+      let startX, scrollLeft;
+
+      wsContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - wsContainer.offsetLeft;
+        scrollLeft = wsContainer.scrollLeft;
+      });
+      window.addEventListener('mouseup', () => { isDown = false; });
+      wsContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - wsContainer.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        wsContainer.scrollLeft = scrollLeft - walk;
+      });
+
+      // Update dot indicators dynamically on scroll
+      wsContainer.addEventListener('scroll', () => {
+        const d0 = document.getElementById('workshop-dot-0');
+        const d1 = document.getElementById('workshop-dot-1');
+        if (!d0 || !d1) return;
+        const isSecond = wsContainer.scrollLeft > 280;
+        if (isSecond) {
+          d0.className = "w-3 h-3 rounded-full border border-[#B48E41] opacity-60 hover:opacity-100 cursor-pointer transition-all";
+          d1.className = "w-3 h-3 rounded-full bg-[#B48E41] border border-[#B48E41] cursor-pointer transition-all";
+        } else {
+          d0.className = "w-3 h-3 rounded-full bg-[#B48E41] border border-[#B48E41] cursor-pointer transition-all";
+          d1.className = "w-3 h-3 rounded-full border border-[#B48E41] opacity-60 hover:opacity-100 cursor-pointer transition-all";
+        }
+      }, { passive: true });
+    }
+
+    // --- Tableware Hotspot Touch Support for Mobile ---
+    document.querySelectorAll('.hotspot-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const isOpened = item.classList.contains('active-hotspot');
+        document.querySelectorAll('.hotspot-item').forEach(el => el.classList.remove('active-hotspot'));
+        if (!isOpened) item.classList.add('active-hotspot');
+        e.stopPropagation();
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.hotspot-item').forEach(el => el.classList.remove('active-hotspot'));
+    });
+    // --- Top Navigation Scroll Styling ---
+    const topNav = document.getElementById('top-navbar');
+    if (topNav) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          topNav.classList.add('bg-[#F4EEE2]/90', 'backdrop-blur-md', 'shadow-sm', 'border', 'border-[#B48E41]/25');
+        } else {
+          topNav.classList.remove('bg-[#F4EEE2]/90', 'backdrop-blur-md', 'shadow-sm', 'border', 'border-[#B48E41]/25');
+        }
+      }, { passive: true });
+    }
+
+    // --- Process Video Sound Toggle (Mute / Unmute) ---
+    const processVideo = document.getElementById('process-video');
+    const soundToggleBtn = document.getElementById('video-sound-toggle');
+    const iconMuted = document.getElementById('icon-muted');
+    const iconUnmuted = document.getElementById('icon-unmuted');
+    const soundToggleText = document.getElementById('sound-toggle-text');
+
+    if (processVideo && soundToggleBtn) {
+      function syncSoundUI() {
+        if (processVideo.muted) {
+          iconMuted.classList.remove('hidden');
+          iconUnmuted.classList.add('hidden');
+          soundToggleText.textContent = 'Unmute';
+          soundToggleBtn.setAttribute('aria-label', 'Unmute video');
+        } else {
+          iconMuted.classList.add('hidden');
+          iconUnmuted.classList.remove('hidden');
+          soundToggleText.textContent = 'Mute';
+          soundToggleBtn.setAttribute('aria-label', 'Mute video');
+        }
+      }
+
+      soundToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        processVideo.muted = !processVideo.muted;
+        if (!processVideo.muted) {
+          processVideo.volume = 1.0;
+          processVideo.play().catch(() => {});
+        }
+        syncSoundUI();
+      });
+
+      // Synchronize initially in case browser alters autoplay muted state
+      syncSoundUI();
+    }
   </script>
 </body>
 </html>

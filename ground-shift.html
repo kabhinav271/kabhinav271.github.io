@@ -1,0 +1,417 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ground Shift: Interactive Story</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,700&display=swap');
+    :root {
+      --bg: #12110e;
+      --paper: #1a1915;
+      --ink: #f1ecdf;
+      --muted: #b4ab96;
+      --line: #353126;
+      --accent: #d6723a;
+      --accent-soft: #7d4f34;
+      --danger: #d2452f;
+      --ok: #5a9e64;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: radial-gradient(1200px 800px at 20% -20%, #2a2419 0%, var(--bg) 50%); color: var(--ink); }
+    body { font-family: 'IBM Plex Sans', system-ui, sans-serif; line-height: 1.5; }
+    .progress {
+      position: fixed; top: 0; left: 0; height: 4px; width: 0;
+      background: linear-gradient(90deg, #c85e28, #ef9b52);
+      z-index: 999;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 90;
+      backdrop-filter: blur(8px);
+      background: rgba(18, 17, 14, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 12px 22px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-weight: 700; letter-spacing: .06em; font-size: 12px; text-transform: uppercase; color: #dbc7a8; }
+    .kicker { color: #c8b896; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+
+    .hero {
+      min-height: 68vh;
+      display: grid;
+      place-items: end center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)),
+        radial-gradient(800px 380px at 66% 25%, rgba(214,114,58,.35), transparent 60%),
+        repeating-linear-gradient(115deg, #201d16 0 7px, #171510 7px 14px);
+      transform: scale(1.06);
+    }
+    .hero-inner {
+      max-width: 1180px;
+      width: 100%;
+      padding: 72px 22px 52px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 4.2rem);
+      line-height: .97;
+      letter-spacing: -.01em;
+      margin: 0;
+      max-width: 900px;
+      text-wrap: balance;
+    }
+    .dek {
+      color: var(--muted);
+      max-width: 760px;
+      margin-top: 18px;
+      font-size: clamp(1rem, 2vw, 1.24rem);
+    }
+    .byline {
+      margin-top: 22px;
+      color: #d7c8a9;
+      font-size: 13px;
+      letter-spacing: .02em;
+    }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 34px 22px; }
+
+    .lead-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .metric {
+      background: linear-gradient(160deg, #201d16, #17150f);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .metric .num { font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 700; color: #f6d3a4; }
+    .metric .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+
+    .story-shell {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(320px, 520px);
+      gap: 26px;
+      align-items: start;
+      margin-top: 36px;
+    }
+    .sticky-panel {
+      position: sticky;
+      top: 74px;
+      min-height: 74vh;
+      background: linear-gradient(180deg, #181610, #14130f);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      overflow: hidden;
+    }
+    .mapbox {
+      height: 62vh;
+      background: radial-gradient(440px 260px at 50% 20%, rgba(214,114,58,.18), transparent 70%), #191710;
+      border-radius: 10px;
+      border: 1px solid #2d291f;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-caption { margin-top: 10px; color: var(--muted); font-size: 13px; }
+    .district { fill: #3f3727; stroke: #8e7b56; stroke-width: 1.2; transition: all .25s ease; }
+    .district.active { fill: #d6723a; stroke: #ffd7b1; filter: drop-shadow(0 0 12px rgba(214,114,58,.5)); }
+
+    .steps { display: grid; gap: 20px; }
+    .step {
+      min-height: 72vh;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, #1f1c15, #17150f);
+      opacity: .45;
+      transform: translateY(8px);
+      transition: opacity .25s ease, transform .25s ease, border-color .25s ease;
+    }
+    .step.active { opacity: 1; transform: translateY(0); border-color: #6a5736; }
+    .step h2 {
+      margin: 0 0 8px;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      line-height: 1.1;
+    }
+    .step p { color: #d2c7b0; margin: 0 0 16px; }
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #6a5736;
+      background: rgba(214,114,58,.1);
+      color: #f0c99e;
+      font-size: 12px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .timeline {
+      margin-top: 34px;
+      border: 1px solid var(--line);
+      background: linear-gradient(170deg, #1d1b14, #14120d);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .timeline h3 { margin: 0 0 8px; font-size: 1.1rem; font-family: 'Newsreader', Georgia, serif; }
+    .timeline p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .range { width: 100%; accent-color: var(--accent); }
+    .bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 14px; align-items: end; height: 140px; }
+    .bar { background: linear-gradient(180deg, #efb37b, #b66132); border-radius: 6px 6px 3px 3px; min-height: 8px; transition: height .35s ease; }
+    .monthline { display: flex; justify-content: space-between; color: var(--muted); margin-top: 8px; font-size: 12px; }
+
+    .compare {
+      margin-top: 34px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: linear-gradient(170deg, #201d16, #15130e);
+    }
+    .compare h3 { margin: 0 0 12px; font-family: 'Newsreader', Georgia, serif; }
+    .slider-wrap {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #3a3224;
+      height: min(46vw, 320px);
+      background: #0f0f0d;
+    }
+    .scene-before,
+    .scene-after {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .scene-before {
+      background-image: repeating-linear-gradient(130deg, #3f3a2e 0 12px, #2a271f 12px 24px);
+    }
+    .scene-after {
+      background-image: repeating-linear-gradient(130deg, #4f2a20 0 12px, #321a15 12px 24px);
+      width: 50%;
+      overflow: hidden;
+      border-right: 2px solid #ffd1ad;
+      box-shadow: 0 0 20px rgba(255,184,135,.35);
+    }
+    .compare input { width: 100%; margin-top: 12px; accent-color: #f39556; }
+    .labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+
+    .footer { margin-top: 36px; color: #a89b83; font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+
+    @media (max-width: 920px) {
+      .lead-grid { grid-template-columns: 1fr; }
+      .story-shell { grid-template-columns: 1fr; }
+      .sticky-panel { position: relative; top: 0; min-height: auto; }
+      .mapbox { height: 340px; }
+      .step { min-height: 58vh; }
+      .topbar-inner { padding: 10px 14px; }
+      .container, .hero-inner { padding-left: 14px; padding-right: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Interactive Desk</div>
+      <div class="kicker">Ground Change Tracker</div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Inside A Neighborhood’s Rapid Transformation</h1>
+      <p class="dek">A scroll-driven visual report showing how one dense urban corridor changed block by block over six months.</p>
+      <div class="byline">By Data Visual Team | March 5, 2026</div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="lead-grid">
+      <article class="metric"><div class="num" data-count="412">0</div><div class="lbl">Structures Damaged</div></article>
+      <article class="metric"><div class="num" data-count="137">0</div><div class="lbl">Blocks Fully Cleared</div></article>
+      <article class="metric"><div class="num" data-count="6">0</div><div class="lbl">Months Tracked</div></article>
+    </div>
+
+    <section class="story-shell">
+      <aside class="sticky-panel">
+        <div class="mapbox">
+          <svg viewBox="0 0 500 350" width="100%" height="100%" aria-label="District map">
+            <rect id="d0" class="district" x="28" y="30" width="130" height="86" rx="8"></rect>
+            <rect id="d1" class="district" x="176" y="34" width="130" height="80" rx="8"></rect>
+            <rect id="d2" class="district" x="324" y="30" width="146" height="92" rx="8"></rect>
+            <rect id="d3" class="district" x="44" y="136" width="158" height="94" rx="8"></rect>
+            <rect id="d4" class="district" x="220" y="130" width="130" height="104" rx="8"></rect>
+            <rect id="d5" class="district" x="366" y="138" width="110" height="92" rx="8"></rect>
+            <rect id="d6" class="district" x="72" y="250" width="150" height="72" rx="8"></rect>
+            <rect id="d7" class="district" x="246" y="248" width="222" height="74" rx="8"></rect>
+          </svg>
+        </div>
+        <div class="map-caption" id="map-caption">Scroll to step through the timeline.</div>
+      </aside>
+
+      <div class="steps" id="steps">
+        <article class="step active" data-map="d2" data-caption="Phase 1: Damage concentrated in the northeast blocks.">
+          <span class="chip">Phase 1</span>
+          <h2>Initial Shock In The Northeast</h2>
+          <p>The first wave concentrated around high-density blocks near the corridor edge. Most nearby streets remained functional but heavily congested.</p>
+          <div class="mut">Key signal: sudden drop in service access within 48 hours.</div>
+        </article>
+
+        <article class="step" data-map="d4" data-caption="Phase 2: Expansion toward central districts.">
+          <span class="chip">Phase 2</span>
+          <h2>Pressure Moves Inward</h2>
+          <p>By month two, the central district became the primary hotspot. Satellite traces show contiguous structural damage rather than isolated impact points.</p>
+          <div class="mut">Key signal: contiguous damage area more than doubled.</div>
+        </article>
+
+        <article class="step" data-map="d5" data-caption="Phase 3: East-side blocks show repeated clearing cycles.">
+          <span class="chip">Phase 3</span>
+          <h2>Repeated Clearing Cycles</h2>
+          <p>Built-up zones in the east underwent repeated clearance. Residents reported multiple return-attempts followed by renewed displacement.</p>
+          <div class="mut">Key signal: repeated movement in and out of the same 2 km zone.</div>
+        </article>
+
+        <article class="step" data-map="d7" data-caption="Phase 4: Consolidated transformation in the southern belt.">
+          <span class="chip">Phase 4</span>
+          <h2>Southern Belt Consolidates</h2>
+          <p>In the final period, the southern belt shifted fastest. What had been mixed-use streets now appears as wide cleared strips intersecting residential pockets.</p>
+          <div class="mut">Key signal: block-level continuity in cleared pathways.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="timeline">
+      <h3>Timeline Scrubber</h3>
+      <p>Drag to inspect monthly intensity estimates and footprint change.</p>
+      <div class="row" style="justify-content:space-between; color: #e6d5b6;">
+        <strong id="monthLabel">Month 1</strong>
+        <span id="intensity">Intensity: 18%</span>
+      </div>
+      <input class="range" id="timelineRange" type="range" min="0" max="5" value="0" />
+      <div class="bars" id="bars"></div>
+      <div class="monthline"><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span></div>
+    </section>
+
+    <section class="compare">
+      <h3>Before / After Swipe</h3>
+      <div class="slider-wrap">
+        <div class="scene-before"></div>
+        <div class="scene-after" id="afterLayer"></div>
+      </div>
+      <input id="compareRange" type="range" min="0" max="100" value="50" />
+      <div class="labels"><span>Before</span><span>After</span></div>
+    </section>
+
+    <div class="footer">
+      Method note: Demo dataset for interactive design prototype. Replace with verified reporting data, sourcing, and annotations for publication.
+    </div>
+  </main>
+
+  <script>
+    const progress = document.getElementById('progress');
+    const steps = [...document.querySelectorAll('.step')];
+    const caption = document.getElementById('map-caption');
+    const districts = [...document.querySelectorAll('.district')];
+    const counters = [...document.querySelectorAll('[data-count]')];
+    const range = document.getElementById('timelineRange');
+    const monthLabel = document.getElementById('monthLabel');
+    const intensity = document.getElementById('intensity');
+    const barsWrap = document.getElementById('bars');
+    const compare = document.getElementById('compareRange');
+    const afterLayer = document.getElementById('afterLayer');
+
+    const monthly = [18, 29, 41, 57, 63, 74];
+    const bars = monthly.map((v) => {
+      const b = document.createElement('div');
+      b.className = 'bar';
+      b.style.height = '8px';
+      barsWrap.appendChild(b);
+      return b;
+    });
+
+    function animateCounters() {
+      counters.forEach((el) => {
+        const target = Number(el.dataset.count || 0);
+        let n = 0;
+        const step = Math.max(1, Math.round(target / 60));
+        const tick = () => {
+          n += step;
+          if (n >= target) n = target;
+          el.textContent = n.toLocaleString();
+          if (n < target) requestAnimationFrame(tick);
+        };
+        tick();
+      });
+    }
+
+    function setStep(activeStep) {
+      const activeMap = activeStep.dataset.map;
+      const activeCaption = activeStep.dataset.caption;
+      steps.forEach((step) => step.classList.toggle('active', step === activeStep));
+      districts.forEach((d) => d.classList.toggle('active', d.id === activeMap));
+      caption.textContent = activeCaption;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setStep(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    steps.forEach((step) => observer.observe(step));
+    setStep(steps[0]);
+
+    function renderTimeline(index) {
+      monthLabel.textContent = `Month ${index + 1}`;
+      intensity.textContent = `Intensity: ${monthly[index]}%`;
+      bars.forEach((bar, i) => {
+        const h = i <= index ? Math.max(12, monthly[i] * 1.6) : 8;
+        bar.style.height = `${h}px`;
+        bar.style.opacity = i <= index ? '1' : '.35';
+      });
+    }
+
+    range.addEventListener('input', () => renderTimeline(Number(range.value)));
+    renderTimeline(0);
+
+    compare.addEventListener('input', () => {
+      afterLayer.style.width = `${compare.value}%`;
+    });
+
+    let counterStarted = false;
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !counterStarted) {
+          counterStarted = true;
+          animateCounters();
+        }
+      });
+    }, { threshold: 0.4 });
+    countObserver.observe(document.querySelector('.lead-grid'));
+
+    document.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      progress.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    }, { passive: true });
+  </script>
+</body>
+</html>
